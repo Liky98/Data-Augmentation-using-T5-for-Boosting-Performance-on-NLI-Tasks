@@ -35,4 +35,4 @@ output_sequences = model.generate(
 
 print(tokenizer.batch_decode(output_sequences, skip_special_tokens=True))
 
-# ['Das Haus ist wunderbar.', 'Ich arbeite gerne in NYC.']
+## ['Das Haus ist wunderbar.', 'Ich arbeite gerne in NYC.']
