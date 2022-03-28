@@ -12,7 +12,7 @@ model = T5ForConditionalGeneration.from_pretrained("t5-small")
 tokenizer.padding_side = "left"
 tokenizer.pad_token = tokenizer.eos_token  # to avoid an error
 
-task_prefix = "translate English to Korean : "
+task_prefix = ""
 sentences = ["The house is wonderful.", "I like to work in Lab."]  # use different length sentences to test batching
 inputs = tokenizer([task_prefix + sentence for sentence in sentences], return_tensors="pt", padding=True)
 labels = ['positive', 'negative']
