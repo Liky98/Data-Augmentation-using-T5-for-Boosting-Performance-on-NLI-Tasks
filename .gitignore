@@ -8,3 +8,7 @@
 *.jsonI
 *.DS_store
 ._snli_1.0
+*.gz
+*.md
+*.bin
+*.csv
