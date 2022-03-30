@@ -2,7 +2,6 @@
 BERT(or RoBERTA, DistilB 등의 트랜스 모델 선택가능)를 사용해 훈련
 SNLI + MultiNLI(AllNLI) 데이터 세트에 ERT 등)
 1000번째 교육 단계(Iteration)마다 STS Benchmark Dataset에 따라 모델 평가
-
 """
 from torch.utils.data import DataLoader
 import math
@@ -42,7 +41,7 @@ model_name = sys.argv[1] if len(sys.argv) > 1 else 'bert-base-uncased'
 train_batch_size = 16
 
 #모델 저장 경로 설정
-model_save_path = 'output/training_nli_'+model_name.replace("/", "-")+'-'+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+model_save_path = 'output/training_AllNLI_'+model_name.replace("/", "-")+'-'+datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 
 #huggingface/트랜스포머 모델(BERT, RobERTa, XLNet, XLM-R 등)을 사용하여 토큰을 임베딩에 매핑
