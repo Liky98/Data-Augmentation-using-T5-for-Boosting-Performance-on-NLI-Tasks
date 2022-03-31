@@ -1,10 +1,16 @@
 """
-SNLI 데이터셋 여는 코드
+SNLI 데이터셋 csv 파일로 만드는 코드
 """
+import csv
 import json
+import pandas
+import pandas as pd
+from sentence_transformers import LoggingHandler, SentenceTransformer, util, InputExample
 
 SNLI_path = "SNLI/snli_1.0/snli_1.0/"
 train_path = SNLI_path + "snli_1.0_train.jsonl"
+dev_path = SNLI_path + "snli_1.0_dev.jsonl"
+test_path = SNLI_path + "snli_1.0_test.jsonl"
 
 label2class = {'entailment': 0, 'contradiction': 1, 'neutral': 2} # 연관, 모순, 중립
 
@@ -26,9 +32,11 @@ with open(train_path, encoding='utf8') as f:
         except KeyError:
             continue
 
-print(x_train_1[0])
-print(x_train_2[0])
-print(y_train[0])
-print(len(x_train_1))
-print(len(x_train_2))
-print(len(y_train))
+train_samples = []
+f=open('SNLI_train.csv', 'w', newline='')
+
+for i in range(len(x_train_1)):
+    wr = csv.writer(f)
+    wr.writerow([x_train_1[i],x_train_2[i],y_train[i]])
+
+f.close()
