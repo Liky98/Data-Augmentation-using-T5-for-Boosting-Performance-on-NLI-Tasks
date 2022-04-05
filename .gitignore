@@ -12,3 +12,7 @@
 *.md
 *.bin
 *.csv
+*.yaml
+*.log
+events*
+*.wandb
