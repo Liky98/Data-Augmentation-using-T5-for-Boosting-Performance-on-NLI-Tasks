@@ -117,6 +117,7 @@ metric = load_metric("accuracy")
 set_seed(42)
 
 for epoch in range(num_epochs):
+    metric = load_metric("accuracy")
     for batch in train_dataloader:
         model.train()
         optimizer.zero_grad()
