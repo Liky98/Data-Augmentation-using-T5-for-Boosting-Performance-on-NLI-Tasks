@@ -15,7 +15,7 @@ import torch
 
 ############변경하는 칸###########
 model_name = 'sentence-transformers/stsb-roberta-base'  #토크나이저를 위한 Huggingface 모델 이름 설정
-model = torch.load('output/(최종)training_roberta_STS_SNLI.pth') #저장된 path 경로
+model = torch.load('output/training_roberta-large_STS_SNLI_0406.pth') #저장된 path 경로
 ##############아래는 건드릴 필요없음 ##############
 
 #시드 고정
@@ -108,11 +108,11 @@ confusion_mx = pd.DataFrame(confusion_matrix(y_pred_list, my_data))
 ax =sns.heatmap(confusion_mx, annot=True, fmt='g')
 plt.title('confusion', fontsize=20)
 plt.show()
-
+#
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score, classification_report
 print(f"precision : {precision_score(my_data, y_pred_list, average='macro')}")
 print(f"recall : {recall_score(my_data, y_pred_list, average='macro')}")
 print(f"f1 score : {f1_score(my_data, y_pred_list, average='macro')}")
 print(f"accuracy : {accuracy_score(my_data, y_pred_list)}")
-f1_score_detail= classification_report(my_data, y_pred_list, )
+f1_score_detail= classification_report(my_data, y_pred_list, digits=3)
 print(f1_score_detail)
