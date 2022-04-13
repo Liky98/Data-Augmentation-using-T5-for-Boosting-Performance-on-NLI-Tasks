@@ -72,7 +72,7 @@ for epoch in range(epochs):
     decoder_attention_mask=  tokenized_output["attention_mask"]
 
 
-    # forward 함수는 올바른 decoder_input_ids 생성함
+    # forward 함수 -> decoder_input_ids 생성
     output = t5_model(input_ids=input_ids, labels=labels,decoder_attention_mask=decoder_attention_mask,attention_mask=attention_mask)
     loss = output[0]
 
@@ -100,3 +100,5 @@ beam_outputs = t5_model.generate(
 for beam_output in beam_outputs:
     sent = tokenizer.decode(beam_output, skip_special_tokens=True,clean_up_tokenization_spaces=True)
     print (sent)
+
+#%%
