@@ -1,15 +1,12 @@
 import random
-import pandas as pd
 import numpy as np
 import torch
-from torch.utils.data import Dataset, DataLoader
 from transformers import (
     AdamW,
     T5ForConditionalGeneration,
     T5Tokenizer,
-    get_linear_schedule_with_warmup
 )
-from torch.utils.data import DataLoader
+
 from datasets import load_dataset
 
 """ 세팅 """
@@ -29,16 +26,21 @@ raw_datasets['train'] = raw_datasets['train'].filter(lambda x : x['label'] in [1
 raw_datasets['validation'] = raw_datasets['validation'].filter(lambda x : x['label'] in [1, 2, 0])
 raw_datasets['test'] = raw_datasets['test'].filter(lambda x : x['label'] in [1, 2, 0])
 
-def tokenize_function(example):
-    return tokenizer(example["premise"], example["hypothesis"], truncation=True)
+entailment =[] #0
+neutral =[] #1
+contradiction = [] #2
+for data in raw_datasets['train'] :
+    if data['label']==0 :
+        entailment.append([data['premise'], data['hypothesis']])
+    if data['label'] == 1:
+        neutral.append([data['premise'], data['hypothesis']])
+    if data['label'] == 2:
+        contradiction.append([data['premise'], data['hypothesis']])
 
-tokenized_datasets = raw_datasets.map(tokenize_function, batched=True)
-
-#데이터셋 이름 수정
-tokenized_datasets  = tokenized_datasets.remove_columns(["premise", "hypothesis"])
-tokenized_datasets = tokenized_datasets.rename_column("label", "labels")
-
-tokenized_datasets.set_format("torch")
+# few-shot learning 하기위한 예제 입력
+true_false_adjective_tuples = []
+for i in range(len(entailment)-180000):
+    true_false_adjective_tuples.append((entailment[i][0], entailment[i][1]))
 
 """ ㅇㅇ """
 # optimizer 설정
@@ -56,25 +58,6 @@ optimizer_grouped_parameters = [
 ]
 optimizer = AdamW(optimizer_grouped_parameters, lr=3e-4, eps=1e-8)
 
-# few-shot learning 하기위한 예제 입력
-
-
-true_false_adjective_tuples = [
-                               ("The cat is alive","The cat is dead"),
-                               ("The old woman is beautiful","The old woman is ugly"),
-                               ("The purse is cheap","The purse is expensive"),
-                               ("Her hair is curly","Her hair is straight"),
-                               ("The bathroom is clean","The bathroom is dirty"),
-                               ("The exam was easy","The exam was difficult"),
-                               ("The house is big","The house is small"),
-                               ("The house owner is good","The house owner is bad"),
-                               ("The little kid is fat","The little kid is thin"),
-                               ("She arrived early","She arrived late."),
-                               ("John is very hardworking","John is very lazy"),
-                               ("The fridge is empty","The fridge is full")
-]
-
-
 # 모델 학습
 t5_model.train()
 
@@ -83,7 +66,7 @@ epochs = 10
 for epoch in range(epochs):
   print ("epoch ",epoch)
   for input,output in true_false_adjective_tuples:
-    input_sent = "falsify: "+input+ " </s>"
+    input_sent = "implicate: "+input+ " </s>"
     ouput_sent = output+" </s>"
 
     tokenized_inp = tokenizer.encode_plus(input_sent,  max_length=96, pad_to_max_length=True,return_tensors="pt")
@@ -106,7 +89,8 @@ for epoch in range(epochs):
     optimizer.zero_grad()
 
 #테스트
-test_sent = 'falsify: The sailor was happy and joyful. </s>'
+test_sentence = contradiction # 모순된 데이터셋
+test_sent = 'implicate: {}} </s>'.format(test_sentence[0][0])
 test_tokenized = tokenizer.encode_plus(test_sent, return_tensors="pt")
 
 test_input_ids  = test_tokenized["input_ids"]
@@ -126,4 +110,5 @@ for beam_output in beam_outputs:
     sent = tokenizer.decode(beam_output, skip_special_tokens=True,clean_up_tokenization_spaces=True)
     print (sent)
 
-#%%
+print(f"원래 문장 : {test_sentence[0][1]}")
+print(f"만든 문장 : {sent}")
