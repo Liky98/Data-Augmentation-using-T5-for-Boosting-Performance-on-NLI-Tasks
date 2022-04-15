@@ -39,8 +39,8 @@ for data in raw_datasets['train'] :
 
 # few-shot learning 하기위한 예제 입력
 true_false_adjective_tuples = []
-for i in range(len(entailment)-180000):
-    true_false_adjective_tuples.append((entailment[i][0], entailment[i][1]))
+for i in range(len(neutral[:100])):
+    true_false_adjective_tuples.append((neutral[i][0], neutral[i][1]))
 
 """ ㅇㅇ """
 # optimizer 설정
@@ -57,6 +57,13 @@ optimizer_grouped_parameters = [
     },
 ]
 optimizer = AdamW(optimizer_grouped_parameters, lr=3e-4, eps=1e-8)
+
+# 쿠다로 설정
+import torch
+
+device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
+t5_model.to(device)
+
 
 # 모델 학습
 t5_model.train()
@@ -81,7 +88,9 @@ for epoch in range(epochs):
 
 
     # forward 함수 -> decoder_input_ids 생성
-    output = t5_model(input_ids=input_ids, labels=labels,decoder_attention_mask=decoder_attention_mask,attention_mask=attention_mask)
+    output = t5_model(input_ids=input_ids.to(device), labels=labels.to(device),
+                      decoder_attention_mask=decoder_attention_mask.to(device),
+                      attention_mask=attention_mask.to(device))
     loss = output[0]
 
     loss.backward()
@@ -90,7 +99,7 @@ for epoch in range(epochs):
 
 #테스트
 test_sentence = contradiction # 모순된 데이터셋
-test_sent = 'implicate: {}} </s>'.format(test_sentence[0][0])
+test_sent = 'implicate: {} </s>'.format(test_sentence[-1][0])
 test_tokenized = tokenizer.encode_plus(test_sent, return_tensors="pt")
 
 test_input_ids  = test_tokenized["input_ids"]
@@ -98,8 +107,7 @@ test_attention_mask = test_tokenized["attention_mask"]
 
 t5_model.eval()
 beam_outputs = t5_model.generate(
-    input_ids=test_input_ids,attention_mask=test_attention_mask,
-    max_length=64,
+    input_ids=test_input_ids.to(device),attention_mask=test_attention_mask.to(device),
     early_stopping=True,
     num_beams=10,
     num_return_sequences=3,
@@ -108,7 +116,9 @@ beam_outputs = t5_model.generate(
 
 for beam_output in beam_outputs:
     sent = tokenizer.decode(beam_output, skip_special_tokens=True,clean_up_tokenization_spaces=True)
-    print (sent)
 
-print(f"원래 문장 : {test_sentence[0][1]}")
+print(f"주어진 문장 : {test_sentence[-1][0]}")
+print(f"원래 문장 : {test_sentence[-1][1]}")
 print(f"만든 문장 : {sent}")
+
+torch.save(t5_model,'neutral_220414.pth')
