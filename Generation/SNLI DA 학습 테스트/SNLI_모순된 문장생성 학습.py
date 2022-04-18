@@ -39,8 +39,8 @@ for data in raw_datasets['train'] :
 
 # few-shot learning 하기위한 예제 입력
 true_false_adjective_tuples = []
-for i in range(len(entailment[:100])):
-    true_false_adjective_tuples.append((entailment[i][0], entailment[i][1]))
+for i in range(len(contradiction[:100])):
+    true_false_adjective_tuples.append((contradiction[i][0], contradiction[i][1]))
 
 """ ㅇㅇ """
 # optimizer 설정
@@ -57,12 +57,10 @@ optimizer_grouped_parameters = [
     },
 ]
 optimizer = AdamW(optimizer_grouped_parameters, lr=3e-4, eps=1e-8)
-
 # 쿠다로 설정
 import torch
 
 device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
-#device = torch.device('cpu')
 t5_model.to(device)
 
 # 모델 학습
@@ -98,7 +96,7 @@ for epoch in range(epochs):
     optimizer.zero_grad()
 
 #%%테스트
-test_sentence = contradiction # 모순된 데이터셋
+test_sentence = entailment # 연관된 데이터셋
 test_sent = 'implicate: {} </s>'.format(test_sentence[0][0])
 test_tokenized = tokenizer.encode_plus(test_sent, return_tensors="pt")
 
@@ -116,10 +114,9 @@ beam_outputs = t5_model.generate(
 
 for beam_output in beam_outputs:
     sent = tokenizer.decode(beam_output, skip_special_tokens=True,clean_up_tokenization_spaces=True)
-    print (sent)
-print(f"주어진 문장 : {test_sentence[0][0]}")
 
+print(f"주어진 문장 : {test_sentence[0][0]}")
 print(f"원래 문장 : {test_sentence[0][1]}")
 print(f"만든 문장 : {sent}")
-#%%
-torch.save(t5_model,'entailment_220414.pth')
+
+torch.save(t5_model,'contradiction_220414.pth')
