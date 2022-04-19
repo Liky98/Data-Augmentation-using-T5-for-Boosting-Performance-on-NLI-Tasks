@@ -189,3 +189,6 @@ beam_outputs = model.model.generate(
 for beam_output in beam_outputs:
     sent = t5_tokenizer.decode(beam_output, skip_special_tokens=True,clean_up_tokenization_spaces=True)
     print (sent)
+
+#%%
+s
