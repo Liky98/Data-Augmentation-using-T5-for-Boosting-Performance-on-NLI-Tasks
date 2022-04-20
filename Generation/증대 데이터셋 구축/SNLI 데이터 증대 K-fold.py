@@ -63,7 +63,7 @@ t5_model.to(device)
 true_false_adjective_tuples = []
 index_length = len(entailment)
 k = 5
-epochs = 5
+epochs = 1
 repository = []
 
 for i in range(k):
@@ -111,10 +111,10 @@ for i in range(k):
 
     #테스트
     test_sentence = contradiction[:i*(index_length//5)] + contradiction[(i+1) * (index_length//5):] # 모순된 데이터셋
-
     t5_model.eval()
-    for data in test_sentence['premise'] :
-        test_sent = 'implicate: {} </s>'.format(data)
+
+    for premise, _ in test_sentence :
+        test_sent = 'implicate: {} </s>'.format(premise)
         test_tokenized = tokenizer.encode_plus(test_sent, return_tensors="pt")
 
         test_input_ids  = test_tokenized["input_ids"]
@@ -131,8 +131,8 @@ for i in range(k):
         for beam_output in beam_outputs:
             sent = tokenizer.decode(beam_output, skip_special_tokens=True,clean_up_tokenization_spaces=True)
 
-        repository.append((data, sent))
-
+        repository.append((premise, sent))
+#%%
 df = pd.DataFrame.from_records(repository)
 df.to_excel('DA_entailment.xlsx')
 
