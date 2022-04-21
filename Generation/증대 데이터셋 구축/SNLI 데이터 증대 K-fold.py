@@ -62,7 +62,7 @@ t5_model.to(device)
 # few-shot learning 하기위한 예제 입력
 true_false_adjective_tuples = []
 index_length = len(entailment)
-k = 5
+k = 10
 epochs = 1
 repository = []
 
@@ -75,13 +75,13 @@ for i in range(k):
     t5_model.train()
 
     true_false_adjective_tuples = []
-    for x in range(i*(index_length//5), (i+1)*(index_length//5)) :
+    for x in range(i*(index_length//k), (i+1)*(index_length//k)) :
         true_false_adjective_tuples.append(
             (entailment[x][0], entailment[x][1])
         )
 
     for epoch in range(epochs):
-      print ("epoch ",epoch)
+      print ("반복횟수 : ",i)
       for input, output in true_false_adjective_tuples:
         input_sent = "implicate: "+input+ " </s>"
         ouput_sent = output+" </s>"
@@ -107,14 +107,17 @@ for i in range(k):
         optimizer.step()
         optimizer.zero_grad()
 
-    torch.save(t5_model, '220415_{}.pth'.format(i + 1))
+    torch.save(t5_model, '220421_{}.pth'.format(i + 1))
 
     #테스트
-    test_sentence = contradiction[:i*(index_length//5)] + contradiction[(i+1) * (index_length//5):] # 모순된 데이터셋
+    test_sentence = contradiction[:i*(index_length//k)]
+    test_sentence.append(contradiction[(i+1) * (index_length//k):])                # 모순된 데이터셋
     t5_model.eval()
+#
+    for j in range(len(test_sentence)) :
+        test_sent = 'implicate: {} </s>'.format(test_sentence[j][0])
+        print(test_sent)
 
-    for premise, _ in test_sentence :
-        test_sent = 'implicate: {} </s>'.format(premise)
         test_tokenized = tokenizer.encode_plus(test_sent, return_tensors="pt")
 
         test_input_ids  = test_tokenized["input_ids"]
@@ -130,9 +133,9 @@ for i in range(k):
 
         for beam_output in beam_outputs:
             sent = tokenizer.decode(beam_output, skip_special_tokens=True,clean_up_tokenization_spaces=True)
+            repository.append((test_sentence[j][0], sent)) # 원래 문장, 생성된 문장
 
-        repository.append((premise, sent))
-#%%
+
 df = pd.DataFrame.from_records(repository)
 df.to_excel('DA_entailment.xlsx')
 
