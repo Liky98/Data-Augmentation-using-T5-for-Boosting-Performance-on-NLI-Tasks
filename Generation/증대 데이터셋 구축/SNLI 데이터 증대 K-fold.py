@@ -37,7 +37,9 @@ for data in raw_datasets['train'] :
         neutral.append([data['premise'], data['hypothesis']])
     if data['label'] == 2:
         contradiction.append([data['premise'], data['hypothesis']])
-
+entailment = list(set([tuple(set(item)) for item in entailment]))
+neutral = list(set([tuple(set(item)) for item in neutral]))
+contradiction = list(set([tuple(set(item)) for item in contradiction]))
 """ ㅇㅇ """
 # optimizer 설정
 # 모든 파라미터 w,r,t의 그레디언트 로스 계산하고 업데이트
@@ -143,3 +145,10 @@ df.to_excel('DA_entailment.xlsx')
 #106 모델 저장 경로 설정 변경
 #109 테스트할 반대된 데이터셋 이름 변경
 #133 엑셀 저장파일 이름 변경
+
+#%% 중복제거
+items = list(set([tuple(set(item)) for item in repository]))
+df = pd.DataFrame.from_records(items)
+df.to_excel('DA_entailment_중복제거.xlsx')
+
+print(len(items))
