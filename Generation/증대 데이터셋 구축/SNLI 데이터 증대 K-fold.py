@@ -146,9 +146,16 @@ df.to_excel('DA_entailment.xlsx')
 #109 테스트할 반대된 데이터셋 이름 변경
 #133 엑셀 저장파일 이름 변경
 
+#%%
+
 #%% 중복제거
-items = list(set([tuple(set(item)) for item in repository]))
+
+items = pd.DataFrame(set(repository)).drop_duplicates().values
+#items = list(set([tuple(set(item)) for item in repository]))
 df = pd.DataFrame.from_records(items)
-df.to_excel('DA_entailment_중복제거.xlsx')
+df.to_csv('DA_entailment_중복제거.csv')
 
 print(len(items))
+#%%
+df = pd.DataFrame.from_records(repository)
+df.to_csv('DA_entailment_1차.csv')
