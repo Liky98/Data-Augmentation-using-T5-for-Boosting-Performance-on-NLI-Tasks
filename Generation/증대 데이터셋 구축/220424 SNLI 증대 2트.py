@@ -143,19 +143,50 @@ def generation_sentence(model, dataset, device) :
 
     return repository
 
-k = 2
-for dataset in [entailment, contradiction, neutral] :
-    # 연관된 데이터셋 저장
-    augmentation_repository = []
-    model = model_train(device=device, dataset=dataset[:len(dataset) // k], epochs=5, path='entailment1')
-    output = generation_sentence(model=model, dataset=dataset[len(dataset) // k:], device=device)
-    augmentation_repository.append(output)
-    print(f"{dataset} 데이터 증대, 1차 작업 완료 ")
-    model = model_train(device=device, dataset=dataset[len(dataset) // k:], epochs=5, path='entailment2')
-    output = generation_sentence(model=model, dataset=dataset[:len(dataset) // k], device=device)
-    augmentation_repository.append(output)
-    print(f"{dataset} 데이터 증대, 2차 작업 완료 ")
-   # items = list(set([tuple(set(item)) for item in augmentation_repository]))
-    df = pd.DataFrame.from_records(augmentation_repository)
-    df.to_excel('DA_{}.xlsx'.format(dataset))
-    print(f"{dataset} 데이터 증대 개수 : {len(augmentation_repository)}")
+k = 10
+
+#for dataset in [entailment, contradiction, neutral] :
+# 연관된 데이터셋 저장
+augmentation_repository = []
+model = model_train(device=device, dataset=entailment[:len(entailment) // k], epochs=5, path='entailment1')
+output = generation_sentence(model=model, dataset=entailment[len(entailment) // k:], device=device)
+augmentation_repository.append(output)
+print(f"entailment 데이터 증대, 1차 작업 완료 ")
+model = model_train(device=device, dataset=entailment[len(entailment) // k:], epochs=5, path='entailment2')
+output = generation_sentence(model=model, dataset=entailment[:len(entailment) // k], device=device)
+augmentation_repository.append(output)
+print(f" entailment 데이터 증대, 2차 작업 완료 ")
+# items = list(set([tuple(set(item)) for item in augmentation_repository]))
+df = pd.DataFrame.from_records(augmentation_repository)
+df.to_excel('DA_{}.xlsx'.format('entailment'))
+print(f" 데이터 증대 개수 : {len(augmentation_repository)}")
+
+# 모순된 데이터셋 저장
+augmentation_repository = []
+model = model_train(device=device, dataset=contradiction[:len(contradiction) // k], epochs=5, path='contradiction1')
+output = generation_sentence(model=model, dataset=contradiction[len(contradiction) // k:], device=device)
+augmentation_repository.append(output)
+print(f"contradiction 데이터 증대, 1차 작업 완료 ")
+model = model_train(device=device, dataset=contradiction[len(contradiction) // k:], epochs=5, path='contradiction2')
+output = generation_sentence(model=model, dataset=contradiction[:len(contradiction) // k], device=device)
+augmentation_repository.append(output)
+print(f" contradiction 데이터 증대, 2차 작업 완료 ")
+# items = list(set([tuple(set(item)) for item in augmentation_repository]))
+df = pd.DataFrame.from_records(augmentation_repository)
+df.to_excel('DA_{}.xlsx'.format('contradiction'))
+print(f" 데이터 증대 개수 : {len(augmentation_repository)}")
+
+# 모호된 데이터셋 저장
+augmentation_repository = []
+model = model_train(device=device, dataset=neutral[:len(neutral) // k], epochs=5, path='neutral1')
+output = generation_sentence(model=model, dataset=neutral[len(neutral) // k:], device=device)
+augmentation_repository.append(output)
+print(f"neutral 데이터 증대, 1차 작업 완료 ")
+model = model_train(device=device, dataset=neutral[len(neutral) // k:], epochs=5, path='neutral2')
+output = generation_sentence(model=model, dataset=neutral[:len(neutral) // k], device=device)
+augmentation_repository.append(output)
+print(f" neutral 데이터 증대, 2차 작업 완료 ")
+# items = list(set([tuple(set(item)) for item in augmentation_repository]))
+df = pd.DataFrame.from_records(augmentation_repository)
+df.to_excel('DA_{}.xlsx'.format('neutral'))
+print(f" 데이터 증대 개수 : {len(augmentation_repository)}")
