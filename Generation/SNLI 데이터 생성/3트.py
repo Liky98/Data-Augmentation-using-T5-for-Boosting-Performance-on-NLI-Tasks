@@ -89,9 +89,9 @@ def model_train(device, dataset, epochs, path) :
             input_sent = "implicate: " + input + " </s>"
             ouput_sent = output + " </s>"
 
-            tokenized_inp = tokenizer.encode_plus(input_sent, max_length=96, pad_to_max_length=True,
+            tokenized_inp = tokenizer.encode_plus(input_sent, max_length=200, pad_to_max_length=True,
                                                   return_tensors="pt")
-            tokenized_output = tokenizer.encode_plus(ouput_sent, max_length=96, pad_to_max_length=True,
+            tokenized_output = tokenizer.encode_plus(ouput_sent, max_length=200, pad_to_max_length=True,
                                                      return_tensors="pt")
 
             input_ids = tokenized_inp["input_ids"]
@@ -139,7 +139,7 @@ def generation_sentence(model, dataset, device) :
 
         for beam_output in beam_outputs:
             sent = tokenizer.decode(beam_output, skip_special_tokens=True, clean_up_tokenization_spaces=True)
-            repository.append((data[0], sent))  # 원래 문장, 생성된 문장
+            repository.append([data[0], sent])  # 원래 문장, 생성된 문장
 
     return repository
 
@@ -148,33 +148,35 @@ k = 10
 #for dataset in [entailment, contradiction, neutral] :
 # 연관된 데이터셋 저장
 augmentation_repository = []
-model = model_train(device=device, dataset=entailment[:len(entailment) // k], epochs=5, path='entailment1')
-output = generation_sentence(model=model, dataset=entailment[len(entailment) // k:], device=device)
+model = torch.load("entailment0428.pth")
+model.to(device)
+#model = model_train(device=device, dataset=entailment[:1000], epochs=5, path='entailment0428')
+output = generation_sentence(model=model, dataset=entailment[1000:], device=device)
 augmentation_repository.append(output)
 print(f"entailment 데이터 증대, 1차 작업 완료 ")
 # items = list(set([tuple(set(item)) for item in augmentation_repository]))
 df = pd.DataFrame.from_records(augmentation_repository)
-df.to_excel('DA_{}.xlsx'.format('entailment'))
+df.to_csv('DA_{}.csv'.format('entailment0428'))
 print(f" 데이터 증대 개수 : {len(augmentation_repository)}")
 
 # 모순된 데이터셋 저장
 augmentation_repository = []
-model = model_train(device=device, dataset=contradiction[:len(contradiction) // k], epochs=5, path='contradiction1')
-output = generation_sentence(model=model, dataset=contradiction[len(contradiction) // k:], device=device)
+model = model_train(device=device, dataset=contradiction[:1000], epochs=5, path='contradiction0428')
+output = generation_sentence(model=model, dataset=contradiction[1000:], device=device)
 augmentation_repository.append(output)
 print(f"contradiction 데이터 증대, 1차 작업 완료 ")
 # items = list(set([tuple(set(item)) for item in augmentation_repository]))
 df = pd.DataFrame.from_records(augmentation_repository)
-df.to_excel('DA_{}.xlsx'.format('contradiction'))
+df.to_csv('DA_{}.csv'.format('contradiction0428'))
 print(f" 데이터 증대 개수 : {len(augmentation_repository)}")
 
 # 모호된 데이터셋 저장
 augmentation_repository = []
-model = model_train(device=device, dataset=neutral[:len(neutral) // k], epochs=5, path='neutral1')
-output = generation_sentence(model=model, dataset=neutral[len(neutral) // k:], device=device)
+model = model_train(device=device, dataset=neutral[:1000], epochs=5, path='neutral0428')
+output = generation_sentence(model=model, dataset=neutral[1000:], device=device)
 augmentation_repository.append(output)
 print(f"neutral 데이터 증대, 1차 작업 완료 ")
 # items = list(set([tuple(set(item)) for item in augmentation_repository]))
 df = pd.DataFrame.from_records(augmentation_repository)
-df.to_excel('DA_{}.xlsx'.format('neutral'))
+df.to_csv('DA_{}.csv'.format('neutral0428'))
 print(f" 데이터 증대 개수 : {len(augmentation_repository)}")
