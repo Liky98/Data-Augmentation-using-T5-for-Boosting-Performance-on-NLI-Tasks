@@ -77,12 +77,7 @@ def model_train(device, dataset, epochs, path) :
     t5_model.to(device)
     t5_model.train()
 
-    true_false_adjective_tuples = []
-    for data in dataset :
-        true_false_adjective_tuples.append(
-            (data[0], data[1])
-        )
-
+    true_false_adjective_tuples = [(data[0], data[1]) for data in dataset]
     for epoch in range(epochs):
         print(f"Epoch = {epoch}")
         for input, output in true_false_adjective_tuples :
@@ -112,6 +107,7 @@ def model_train(device, dataset, epochs, path) :
     torch.save(t5_model, '{}.pth'.format(path))
 
     return t5_model
+
 
 def generation_sentence(model, dataset, device) :
     g_model = model
@@ -143,7 +139,7 @@ def generation_sentence(model, dataset, device) :
 
     return repository
 
-k = 10
+# k = 10
 
 #for dataset in [entailment, contradiction, neutral] :
 # 연관된 데이터셋 저장
