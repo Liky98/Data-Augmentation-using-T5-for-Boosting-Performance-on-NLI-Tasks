@@ -11,22 +11,22 @@ model_save_path = "12만개 증대 데이터셋 추가 후 학습.pth"
 
 train_dataset, val_dataset, test_dataset = data_loader.snli_data_load()
 
-train_dataloader, eval_dataloader, test_dataloader = data_loader.dataloader(model_name= model_name,
-                                                                            test_dataset=train_dataset,
-                                                                            val_dataset=val_dataset,
-                                                                            train_dataset=test_dataset
-                                                                            )
+data_loader = data_loader.dataloader(model_name= model_name,
+                                     test_dataset=train_dataset,
+                                     val_dataset=val_dataset,
+                                     train_dataset=test_dataset
+                                     )
 
 model = model.model_train(model_name= model_name,
-                          train_dataloader= train_dataloader,
-                          dev_dataloader= eval_dataloader,
+                          train_dataloader= data_loader["train"],
+                          dev_dataloader= data_loader["validation"],
                           device= device,
                           save_path= model_save_path,
                           num_label = 3,
                           num_epochs = 3
                           )
 
-prediction_list, label_list = test.test(test_dataloader=test_dataloader,
+prediction_list, label_list = test.test(test_dataloader=data_loader["validation"],
                                         model= model,
                                         device= device
                                         )

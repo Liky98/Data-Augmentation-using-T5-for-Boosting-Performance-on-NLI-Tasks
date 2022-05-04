@@ -34,6 +34,8 @@ raw_datasets['train'] = raw_datasets['train'].filter(lambda x : x['label'] in [1
 raw_datasets['validation'] = raw_datasets['validation'].filter(lambda x : x['label'] in [1, 2, 0])
 raw_datasets['test'] = raw_datasets['test'].filter(lambda x : x['label'] in [1, 2, 0])
 
+print(raw_datasets.shape)
+#%%
 #모델 저장 경로 설정
 model_name = 'roberta-large'
 model_save_path = 'output/training_roberta-large_SNLI_0405.pth'
@@ -45,7 +47,8 @@ def tokenize_function(example):
     return tokenizer(example["premise"], example["hypothesis"], truncation=True)
 
 tokenized_datasets = raw_datasets.map(tokenize_function, batched=True)
-
+print(tokenized_datasets)
+#%%
 #데이터셋 이름 수정
 tokenized_datasets  = tokenized_datasets.remove_columns(["premise", "hypothesis"])
 tokenized_datasets = tokenized_datasets.rename_column("label", "labels")
