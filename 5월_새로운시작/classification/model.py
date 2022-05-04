@@ -8,7 +8,7 @@ from transformers import AdamW
 
 def model_train(model_name, train_dataloader, dev_dataloader, device, save_path, num_label = 3, num_epochs = 3) :
     model = RobertaForSequenceClassification.from_pretrained(model_name, num_labels=num_label)
-
+    model.to(device)
     # 옵티마이저 설정 및 스케줄러
     optimizer = AdamW(model.parameters(), lr=2e-5)
 
@@ -20,10 +20,11 @@ def model_train(model_name, train_dataloader, dev_dataloader, device, save_path,
         num_training_steps=num_training_steps,
     )
 
-    for epoch in tqdm(range(num_epochs), desc="모델 학습중"):
+    for epoch in range(num_epochs):
+        print(f"epoch : {epoch}")
         metric = load_metric("accuracy")
 
-        for batch in train_dataloader:
+        for batch in tqdm(train_dataloader,desc="모델 학습중 "):
             model.train()
             optimizer.zero_grad()
             batch = {k: v.to(device) for k, v in batch.items()}

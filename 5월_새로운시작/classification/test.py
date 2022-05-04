@@ -10,10 +10,11 @@ from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_sc
 def test(test_dataloader, model, device) :
     # test 데이터셋 성능 확인
     test_metric = load_metric("accuracy")
-
+    model.to(device)
     prediction_list = []
     label_list = []
     model.eval() #모델 평가용도로 변경
+
     for batch in tqdm(test_dataloader):
         batch = {k: v.to(device) for k, v in batch.items()}
         with torch.no_grad():

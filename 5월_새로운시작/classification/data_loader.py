@@ -41,12 +41,6 @@ def dataloader(model_name, dataset) :
 
     tokenized_datasets = dataset.map(tokenize_function, batched=True)
 
-    def tokenize_function(example):
-        return tokenizer(example["premise"], example["hypothesis"], truncation=True)
-
-    tokenized_datasets = tokenized_datasets.map(tokenize_function, batched=True)
-
-
     #데이터셋 이름 수정
     tokenized_datasets  = tokenized_datasets.remove_columns(["premise", "hypothesis"])
     tokenized_datasets = tokenized_datasets.rename_column("label", "labels")
