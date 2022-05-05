@@ -21,7 +21,7 @@ def nucleus(model, device, input_ids, input_mask, setting_length):
         max_length=setting_length,  # 최대 디코딩 길이는 50
         top_k=50,  # 확률 순위가 50위 밖인 토큰은 샘플링에서 제외
         top_p=0.95,  # 누적 확률이 95%인 후보집합에서만 생성
-        num_return_sequences=2,  # n개의 결과를 디코딩해낸다
+        num_return_sequences=1,  # n개의 결과를 디코딩해낸다
         early_stopping=True
     )
     return nucleus_outputs

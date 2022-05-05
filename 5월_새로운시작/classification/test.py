@@ -52,5 +52,5 @@ def confusion(prediction_list, label_list) :
     print(f"recall : {recall_score(my_data, y_pred_list, average='macro')}")
     print(f"f1 score : {f1_score(my_data, y_pred_list, average='macro')}")
     print(f"accuracy : {accuracy_score(my_data, y_pred_list)}")
-    f1_score_detail= classification_report(my_data, y_pred_list)
+    f1_score_detail= classification_report(my_data, y_pred_list,  digits=3)
     print(f1_score_detail)

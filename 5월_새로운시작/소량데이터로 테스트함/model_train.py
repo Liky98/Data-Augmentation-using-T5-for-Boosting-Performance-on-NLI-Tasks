@@ -30,8 +30,9 @@ def model_train(device, dataset, epochs, path, model_name = 't5-base', set_max_l
 
     true_false_adjective_tuples = [(data[0], data[1]) for data in dataset]
 
-    for epoch in tqdm(range(epochs), desc='모델 학습 중 : '):
-        for input, output in true_false_adjective_tuples :
+    for epoch in range(epochs):
+        print(f"epoch => {epoch+1}")
+        for input, output in tqdm(true_false_adjective_tuples, desc='모델 학습 중 ') :
             input_sent =  "falsify: "+input +" </s>"
             ouput_sent = output +" </s>"
 

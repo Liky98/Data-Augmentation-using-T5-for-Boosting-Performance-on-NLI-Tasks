@@ -6,7 +6,7 @@ import Decoder
 import save_excel
 
 seed.set_seed(42)
-file_name = "t5base, trainData_1000, contradiction, nucleus_sampling, data_20000"
+file_name = "t5base, trainData_1000, contradiction, nucleus_sampling1, data_20000"
 device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
 
 entailment, neutral, contradiction = data_processing.data_load() #연관, 모호, 모순
@@ -30,8 +30,15 @@ outputs = Decoder.generation_sentence(model=model,
 
 save_excel.save_csv(outputs, file_name)
 
-"""
-0502 18:09 연관 데이터셋 2만개 생성 돌림
+""" nucleus sampling > num_return_sequences=2
+0502 18:09 연관 데이터셋 2만개 생성 돌림 
 0502 21:23 모호 데이터셋 2만개 생성 돌림
 0503 00:49 모순 데이터셋 2만개 생성 돌림
+총 12만개 데이터 증대 완료
+"""
+"""nucleus sampling > num_return_sequences=1
+0504 22:02 연관 데이터셋 2만개 생성 돌림 
+0504 23:13 모호 데이터셋 2만개 생성 돌림 
+0505 01:11 무관 데이터셋 2만개 생성 돌림 
+
 """
