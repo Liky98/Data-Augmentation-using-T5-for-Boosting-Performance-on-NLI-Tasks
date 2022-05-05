@@ -1,23 +1,23 @@
 from torch.utils.data import DataLoader
 from transformers import DataCollatorWithPadding
 import transformers
-from datasets import load_dataset, DatasetDict,DatasetDict
+from datasets import load_dataset,DatasetDict
 from tqdm import tqdm
 
 ds = load_dataset('super_glue', 'multirc')
 ds.save_to_disk('tempds')
 
 ds = DatasetDict.load_from_disk('tempds')
-def snli_data_load(path):
+def snli_data_load(final_dataset_path, integrated_csv_path):
     try :
-        dataset = DatasetDict.load_from_disk(path)
+        dataset = DatasetDict.load_from_disk(final_dataset_path)
         return dataset
     except :
         # 데이터 가져오기
         train_dataset_path = "../../Data/SNLI/SNLI_train.csv"
         val_dataset_path = "../../Data/SNLI/SNLI_dev.csv"
         test_dataset_path = "../../Data/SNLI/SNLI_test.csv"
-        DA_dataset_path = "../소량데이터로 테스트함/nucleus 20000 dataset/60000Dataset.csv"
+        DA_dataset_path = integrated_csv_path
 
         data_files = {"train": train_dataset_path,
                       "validation": val_dataset_path,
@@ -36,7 +36,7 @@ def snli_data_load(path):
 
 
         dataset.shuffle(seeds=42)
-        dataset.save_to_disk(path)
+        dataset.save_to_disk(final_dataset_path)
         return dataset
 
 
