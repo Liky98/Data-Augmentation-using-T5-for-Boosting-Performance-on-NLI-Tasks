@@ -8,7 +8,7 @@ def beam(model, device, input_ids, input_mask,setting_length) :
         input_ids=input_ids.to(device), attention_mask=input_mask.to(device),
         early_stopping=True,
         num_beams=10, #  Beam Search 각 타임스텝에서 가장 가능성 있는 num_beams개의 시퀀스를 유지하고, 최종적으로 가장 확률이 높은 가설을 선택하는 방법
-        num_return_sequences=3,
+        num_return_sequences=1,
         no_repeat_ngram_size=2,
         max_length = setting_length
     )

@@ -23,7 +23,7 @@ def snli_data_load(final_dataset_path, integrated_csv_path):
                       "validation": val_dataset_path,
                       "test": test_dataset_path}
         dataset = load_dataset("csv", data_files=data_files)
-        da_dataset = load_dataset('csv', data_files=DA_dataset_path)
+        da_dataset = DatasetDict.load_from_disk(DA_dataset_path)
 
         da_dataset.shuffle(seeds=42)
 
