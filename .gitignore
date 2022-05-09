@@ -18,3 +18,4 @@ events*
 *.wandb
 training_roberta*
 *.pth
+*.arrow
