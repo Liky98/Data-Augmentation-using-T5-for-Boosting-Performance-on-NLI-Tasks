@@ -30,7 +30,7 @@ model = model.model_train(model_name= model_name,
                           device= device,
                           save_path= model_save_path,
                           num_label = 3,
-                          num_epochs = 3
+                          num_epochs = 10
                           )
 
 prediction_list, label_list = test.test(test_dataloader=test_dataloader,

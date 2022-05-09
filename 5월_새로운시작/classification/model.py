@@ -4,9 +4,9 @@ from datasets import load_metric
 from tqdm import tqdm
 import torch
 from transformers import AdamW
+import numpy as np
 
-
-def model_train(model_name, train_dataloader, dev_dataloader, device, save_path, num_label = 3, num_epochs = 3) :
+def model_train(model_name, train_dataloader, dev_dataloader, device, save_path,  num_epochs = 3, num_label = 3) :
     model = RobertaForSequenceClassification.from_pretrained(model_name, num_labels=num_label)
     model.to(device)
     # 옵티마이저 설정 및 스케줄러
@@ -20,7 +20,10 @@ def model_train(model_name, train_dataloader, dev_dataloader, device, save_path,
         num_training_steps=num_training_steps,
     )
 
+    accuracy_list = []
     for epoch in range(num_epochs):
+        history = []
+        mean_history = []
         print(f"epoch : {epoch}")
         metric = load_metric("accuracy")
 
@@ -44,8 +47,16 @@ def model_train(model_name, train_dataloader, dev_dataloader, device, save_path,
                 logits = outputs.logits
                 predict = torch.argmax(logits, dim=-1)
                 metric.add_batch(predictions=predict, references=batch["labels"])
-        print(metric.compute())
 
-    torch.save(model, save_path)
+        history.append(metric.compute())
+        for data in history:
+            mean_history.append(data['accuracy'])
 
-    return model
+        average = np.mean(mean_history)
+        print(f"validation Accuracy => {average}")
+
+        accuracy_list.append(average)
+        modelpath = save_path+epoch
+        torch.save(model, modelpath)
+
+    return model, accuracy_list

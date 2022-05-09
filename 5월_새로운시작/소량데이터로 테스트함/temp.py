@@ -36,3 +36,9 @@ save_excel.integrated_csv(save_path = data_save_path,
 """ beam_search > num_return_sequences=1
 0506 15:16 통합 데이터셋 2만개 생성 
 """
+
+#%%
+a = "aaa"
+b = "bbb"
+c = a+b
+print(c)
