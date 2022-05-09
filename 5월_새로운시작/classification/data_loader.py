@@ -2,13 +2,10 @@ from torch.utils.data import DataLoader
 from transformers import DataCollatorWithPadding
 import transformers
 from datasets import load_dataset,DatasetDict
-from tqdm import tqdm
+import pandas as pd
+import sklearn
 
-ds = load_dataset('super_glue', 'multirc')
-ds.save_to_disk('tempds')
-
-ds = DatasetDict.load_from_disk('tempds')
-def snli_data_load(final_dataset_path, integrated_csv_path):
+def snli_data_load(final_dataset_path, da_train_csv_path, da_val_csv_path):
     try :
         dataset = DatasetDict.load_from_disk(final_dataset_path)
         return dataset
@@ -17,26 +14,29 @@ def snli_data_load(final_dataset_path, integrated_csv_path):
         train_dataset_path = "../../Data/SNLI/SNLI_train.csv"
         val_dataset_path = "../../Data/SNLI/SNLI_dev.csv"
         test_dataset_path = "../../Data/SNLI/SNLI_test.csv"
-        DA_dataset_path = integrated_csv_path
 
-        data_files = {"train": train_dataset_path,
-                      "validation": val_dataset_path,
+        dataFrame = pd.concat(
+            map(pd.read_csv, [train_dataset_path, da_train_csv_path]), ignore_index=False)
+        da_dataset = sklearn.utils.shuffle(dataFrame)
+        da_dataset.to_csv('train_temp.csv', index=False)
+
+        dataFrame = pd.concat(
+            map(pd.read_csv, [val_dataset_path, da_val_csv_path]), ignore_index=False)
+        da_dataset = sklearn.utils.shuffle(dataFrame)
+        da_dataset.to_csv('val_temp.csv', index=False)
+
+        data_files = {"train": 'train_temp.csv',
+                      "validation": 'val_temp.csv',
                       "test": test_dataset_path}
+
         dataset = load_dataset("csv", data_files=data_files)
-        da_dataset = DatasetDict.load_from_disk(DA_dataset_path)
 
-        da_dataset.shuffle(seeds=42)
-
-        dataset_size = round(da_dataset["train"].num_rows / 10)
-
-        for size in tqdm(range(dataset_size * 8), desc="train 데이터셋에 80% 추가"):
-            dataset["train"].add_item(da_dataset["train"][size])
-        for size in tqdm(range(dataset_size*8, da_dataset["train"].num_rows), desc="val 데이터셋에 나머지 20%추가"):
-            dataset["validation"].add_item(da_dataset["train"][size])
-
-
-        dataset.shuffle(seeds=42)
         dataset.save_to_disk(final_dataset_path)
+
+        print(f"Train Dataset => {dataset['train'].num_rows}")
+        print(f"Train Dataset => {dataset['validation'].num_rows}")
+        print(f"Train Dataset => {dataset['test'].num_rows}")
+
         return dataset
 
 
@@ -69,9 +69,17 @@ def dataloader(model_name, dataset) :
     return train_dataloader, eval_dataloader, test_dataloader
 
 if __name__ == "__main__" :
-    dataset = snli_data_load()
+    # # 저장될 최종 데이터셋 경로 설정
+    # dataset_path = "as"
+    #
+    # # 증대 데이터만 합쳐논 DataDict path
+    # ab = "../소량데이터로 테스트함/DA_train_Nucleus 2 실험.csv"
+    # cd = "../소량데이터로 테스트함/DA_val_Nucleus 2 실험.csv"
+    #
+    # dataset = snli_data_load(dataset_path,ab,cd)
+    #
+    # print(f"train dataset => {dataset['train'].num_rows}")
+    # print(f"validation dataset => {dataset['validation'].num_rows}")
+    # print(f"test dataset => {dataset['test'].num_rows}")
 
-    print(f"train dataset => {dataset['train'].num_rows}")
-    print(f"validation dataset => {dataset['validation'].num_rows}")
-    print(f"test dataset => {dataset['test'].num_rows}")
-
+    print("안녕")

@@ -30,7 +30,7 @@ entailment_outputs = Decoder.generation_sentence(model=entailment_model,
                                       setting_length= 200
                                       )
 
-save_excel.save_csv(entailment_outputs, entailment_file_name)
+save_excel.save_csv(entailment_outputs, entailment_file_name,label=0)
 
 # 모호 데이터셋 제작
 neutral_file_name = "t5base, trainData_1000, neutral, beam_search1, data_20000"
@@ -52,7 +52,7 @@ neutral_outputs = Decoder.generation_sentence(model=neutral_model,
                                       setting_length= 200
                                       )
 
-save_excel.save_csv(neutral_outputs, neutral_file_name)
+save_excel.save_csv(neutral_outputs, neutral_file_name,label=1)
 
 # 모순 데이터셋 제작
 contradiction_file_name = "t5base, trainData_1000, contradiction, beam_search1, data_20000"
@@ -74,10 +74,10 @@ contradiction_outputs = Decoder.generation_sentence(model=contradiction_model,
                                       setting_length= 200
                                       )
 
-save_excel.save_csv(contradiction_outputs, contradiction_file_name)
+save_excel.save_csv(contradiction_outputs, contradiction_file_name,label=2)
 
 #데이터셋 통합
-data_save_path = "T5_BASE, 1000 FewShot, beam_search 1, makeData 20000"
+data_save_path = "(csv)t5base, trainData_1000, beam_search1, data_20000"
 
 save_excel.integrated_csv(save_path = data_save_path,
                           contradiction_csv = 'DA_{}.csv'.format(contradiction_file_name),
