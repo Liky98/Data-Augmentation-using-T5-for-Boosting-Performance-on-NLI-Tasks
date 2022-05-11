@@ -11,11 +11,11 @@ device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("
 entailment, neutral, contradiction = data_processing.data_load() #연관, 모호, 모순
 
 # 연관 데이터셋 제작
-entailment_file_name = "t5base, trainData_1000, entailment, beam_search1, data_20000"
+entailment_file_name = "t5-large, trainData_10000, entailment, beam_search1, data_20000"
 
 entailment_model = model_train.model_train(
     device=device,
-    dataset= entailment[:1000],
+    dataset= entailment[:10000],
     epochs=5,
     path=entailment_file_name,
     set_max_length= 200,
@@ -84,6 +84,8 @@ save_excel.integrated_csv(save_path = data_save_path,
                           entailment_csv = 'DA_{}.csv'.format(entailment_file_name),
                           neutral_csv = 'DA_{}.csv'.format(neutral_file_name)
                           )
+
+
 
 """ nucleus sampling > num_return_sequences=2
 0502 18:09 연관 데이터셋 2만개 생성 돌림 

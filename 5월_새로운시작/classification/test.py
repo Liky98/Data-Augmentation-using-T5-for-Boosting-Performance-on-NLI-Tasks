@@ -54,3 +54,11 @@ def confusion(prediction_list, label_list) :
     print(f"accuracy : {accuracy_score(my_data, y_pred_list)}")
     f1_score_detail= classification_report(my_data, y_pred_list,  digits=3)
     print(f1_score_detail)
+
+def plot_accracy(acc_list) :
+    plt.plot(range(len(acc_list)), acc_list, label='Accuracy', color='darkred')
+    plt.title('Model Accuracy')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.show()
+    plt.imshow()
