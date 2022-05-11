@@ -5,8 +5,9 @@ import numpy as np
 
 
 #file_path = "DA_train_Nucleus 1 실험.csv"
-file_path = "../../Data/SNLI/SNLI_dev.csv"
+file_path = "../../Data/SNLI/SNLI_train.csv"
 file = pd.read_csv(file_path)
+file.dropna()
 
 #연관 모호 모순 / 0 1 2
 entailment = []
@@ -14,6 +15,7 @@ neutral = []
 contradiction = []
 
 for i in tqdm(range(len(file)), desc="데이터 분류 중 ") :
+
     if file["label"][i] == 0:
         entailment.append([file["premise"][i], file["hypothesis"][i]])
     if file["label"][i] == 1:
@@ -34,26 +36,55 @@ neutral_performance_manhattan = []
 contradiction_performance_manhattan = []
 
 for sentence in tqdm(entailment, desc="연관 데이터셋 코사인 유사도 측정") :
-    entailment_performance_cos.append(text_performance_indicators.cos_performance(sentence))
+    try:
+        entailment_performance_cos.append(text_performance_indicators.cos_performance(sentence))
+    except :
+        pass
 for sentence in tqdm(neutral, desc="연관 데이터셋 코사인 유사도 측정")  :
-    neutral_performance_cos.append(text_performance_indicators.cos_performance(sentence))
+    try:
+        neutral_performance_cos.append(text_performance_indicators.cos_performance(sentence))
+    except:
+        pass
 for sentence in tqdm(contradiction, desc="연관 데이터셋 코사인 유사도 측정")  :
-    contradiction_performance_cos.append(text_performance_indicators.cos_performance(sentence))
+    try:
+        contradiction_performance_cos.append(text_performance_indicators.cos_performance(sentence))
+    except:
+        pass
 
 for sentence in tqdm(entailment, desc="연관 데이터셋 유클리디언 유사도 측정") :
-    entailment_performance_euclidean.append(text_performance_indicators.euclidean_performance(sentence))
+    try:
+        entailment_performance_euclidean.append(text_performance_indicators.euclidean_performance(sentence))
+    except:
+        pass
 for sentence in tqdm(neutral, desc="연관 데이터셋 유클리디언 유사도 측정")  :
-    neutral_performance_euclidean.append(text_performance_indicators.euclidean_performance(sentence))
+    try:
+        neutral_performance_euclidean.append(text_performance_indicators.euclidean_performance(sentence))
+    except:
+        pass
+
 for sentence in tqdm(contradiction, desc="연관 데이터셋 유클리디언 유사도 측정")  :
-    contradiction_performance_euclidean.append(text_performance_indicators.euclidean_performance(sentence))
-
+    try:
+        contradiction_performance_euclidean.append(text_performance_indicators.euclidean_performance(sentence))
+    except:
+        pass
 for sentence in tqdm(entailment, desc="연관 데이터셋 맨하탄 유사도 측정") :
-    entailment_performance_manhattan.append(text_performance_indicators.manhattan_performance(sentence))
+    try:
+        entailment_performance_manhattan.append(text_performance_indicators.manhattan_performance(sentence))
+    except:
+        pass
 for sentence in tqdm(neutral, desc="연관 데이터셋 맨하탄 유사도 측정")  :
-    neutral_performance_manhattan.append(text_performance_indicators.manhattan_performance(sentence))
+    try:
+        neutral_performance_manhattan.append(text_performance_indicators.manhattan_performance(sentence))
+    except:
+        pass
 for sentence in tqdm(contradiction, desc="연관 데이터셋 맨하탄 유사도 측정")  :
-    contradiction_performance_manhattan.append(text_performance_indicators.manhattan_performance(sentence))
+    try:
+        contradiction_performance_manhattan.append(text_performance_indicators.manhattan_performance(sentence))
+    except:
+        pass
 
+print(file_path)
+print()
 print("연관 cos 평균")
 print(np.mean(entailment_performance_cos))
 print("모호 cos 평균")

@@ -6,17 +6,18 @@ from sklearn.metrics.pairwise import manhattan_distances
 
 ### 코사인 유사도 ###
 def cos_performance(sentences) :
+
     tfidf_vectorizer = TfidfVectorizer()
      # 문장 벡터화(사전 만들기)
+
     tfidf_matrix = tfidf_vectorizer.fit_transform(sentences)
 
     cos_similar = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])
-
     return cos_similar[0][0]
+
 
 ### 유클리디언 유사도 (두 점 사이의 거리 구하기) ###
 def euclidean_performance(sentences) :
-
     tfidf_vectorizer = TfidfVectorizer()
 
     tfidf_matrix = tfidf_vectorizer.fit_transform(sentences)
@@ -40,3 +41,4 @@ def manhattan_performance(sentences) :
     manhattan_d = manhattan_distances(tfidf_normalized[0:1],tfidf_normalized[1:2])
 
     return manhattan_d[0][0]
+
