@@ -20,14 +20,20 @@ def snli_data_load(final_dataset_path, da_train_csv_path, da_val_csv_path):
         da_dataset = sklearn.utils.shuffle(dataFrame)
         da_dataset.to_csv('train_temp.csv', index=False)
 
-        dataFrame = pd.concat(
-            map(pd.read_csv, [val_dataset_path, da_val_csv_path]), ignore_index=False)
-        da_dataset = sklearn.utils.shuffle(dataFrame)
-        da_dataset.to_csv('val_temp.csv', index=False)
+        # dataFrame = pd.concat(
+        #     map(pd.read_csv, [val_dataset_path, da_val_csv_path]), ignore_index=False)
+        # da_dataset = sklearn.utils.shuffle(dataFrame)
+        # da_dataset.to_csv('val_temp.csv', index=False)
+        #
+        # data_files = {"train": './train_temp.csv',
+        #               "validation": './val_temp.csv',
+        #               "test": test_dataset_path}
 
+        ###
         data_files = {"train": './train_temp.csv',
-                      "validation": './val_temp.csv',
+                      "validation": val_dataset_path,
                       "test": test_dataset_path}
+        ###
 
         dataset = load_dataset("csv", data_files=data_files)
 

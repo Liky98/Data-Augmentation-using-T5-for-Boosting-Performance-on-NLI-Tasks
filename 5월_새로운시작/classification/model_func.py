@@ -27,7 +27,8 @@ def model_train(model_name, train_dataloader, dev_dataloader, device,save_path, 
     for epoch in range(num_epochs):
         print(f"epoch : {epoch}")
         metric = load_metric("accuracy")
-
+        losss = 0
+        loss_count = 0
         for batch in tqdm(train_dataloader,desc="모델 학습중 "):
             model.train()
             optimizer.zero_grad()
@@ -39,7 +40,8 @@ def model_train(model_name, train_dataloader, dev_dataloader, device,save_path, 
             loss.backward()
             optimizer.step()
             lr_scheduler.step()
-
+            losss += loss.item()
+            loss_count +=1
         # 성능확인
 
         with torch.no_grad():
@@ -54,11 +56,14 @@ def model_train(model_name, train_dataloader, dev_dataloader, device,save_path, 
         history = metric.compute()
         acc = history['accuracy']
         print(f"validation Accuracy => {acc}")
-
+        print(f"Loss => {losss/loss_count}")
         accuracy_list.append(acc)
 
         if max(accuracy_list) <= acc :
             torch.save(model, final_path)
+        else:
+            print("정확도 저하로 인한 학습 조기 종료")
+            break
 
     return best_model_path, accuracy_list
 
