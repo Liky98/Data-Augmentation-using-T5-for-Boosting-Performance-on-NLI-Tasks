@@ -2,10 +2,10 @@ import text_performance_indicators
 import pandas as pd
 from tqdm import tqdm
 import numpy as np
+import matplotlib.pyplot as plt
 
-
-#file_path = "DA_train_Nucleus 1 실험.csv"
-file_path = "../../Data/SNLI/SNLI_train.csv"
+file_path = "DA_train_Nucleus 1 실험.csv"
+#file_path = "../../Data/SNLI/SNLI_train.csv"
 file = pd.read_csv(file_path)
 file.dropna()
 
@@ -87,6 +87,7 @@ print(file_path)
 print()
 print("연관 cos 평균")
 print(np.mean(entailment_performance_cos))
+print(np.std(entailment_performance_cos))
 print("모호 cos 평균")
 print(np.mean(neutral_performance_cos))
 print("모순 cos 평균")
@@ -108,6 +109,22 @@ print(np.mean(neutral_performance_manhattan))
 print("모순 맨하탄 평균")
 print(np.mean(contradiction_performance_manhattan))
 
+#%%
+import matplotlib.pyplot as plt
+plt.title("All Dataset cosine similarity")
+plt.xlabel("Data Index")
+plt.ylabel("Score")
+#plt.title("Entailment cosine similarity")
+plt.plot(entailment_performance_cos,'bo', markersize=0.5)
+#plt.show()
+
+#plt.title("neutral cosine similarity")
+plt.plot(neutral_performance_cos,'yo', markersize=0.5)
+#plt.show()
+
+#plt.title("contradiction cosine similarity")
+plt.plot(contradiction_performance_cos,'ro', markersize=0.5)
+plt.show()
 
 
 #%%

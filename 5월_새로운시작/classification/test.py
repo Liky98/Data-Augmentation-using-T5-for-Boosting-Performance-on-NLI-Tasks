@@ -61,4 +61,3 @@ def plot_accracy(acc_list) :
     plt.xlabel('Epoch')
     plt.ylabel('Accuracy')
     plt.show()
-    plt.imshow()

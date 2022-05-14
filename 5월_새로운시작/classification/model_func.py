@@ -20,8 +20,10 @@ def model_train(model_name, train_dataloader, dev_dataloader, device,save_path, 
     )
 
     accuracy_list = []
-
-    os.mkdir(save_path)
+    try:
+        os.mkdir(save_path)
+    except:
+        pass
     best_model_path = "BestModel.pth"
     final_path = save_path + best_model_path
     for epoch in range(num_epochs):
