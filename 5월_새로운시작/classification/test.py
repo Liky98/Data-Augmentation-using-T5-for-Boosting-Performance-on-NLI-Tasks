@@ -56,7 +56,7 @@ def confusion(prediction_list, label_list) :
     print(f1_score_detail)
 
 def plot_accracy(acc_list) :
-    plt.plot(range(len(acc_list)), acc_list, label='Accuracy', color='darkred')
+    plt.plot(range(1,len(acc_list)+1), acc_list, label='Accuracy', color='darkred')
     plt.title('Model Accuracy')
     plt.xlabel('Epoch')
     plt.ylabel('Accuracy')
