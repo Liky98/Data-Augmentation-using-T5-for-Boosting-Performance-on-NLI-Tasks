@@ -3,10 +3,11 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.metrics.pairwise import manhattan_distances
-from sentence_transformers import SentenceTransformer, util
 from transformers import AutoTokenizer, AutoModel
-from sentence_transformers import SentenceTransformer, util
 import torch
+import torch.nn.functional as F
+
+
 ### 코사인 유사도 ###
 def cos_performance(sentences) :
 
@@ -45,27 +46,53 @@ def manhattan_performance(sentences) :
 
     return manhattan_d[0][0]
 
-def sentence_transformer(sentences, device) :
+def sentence_transformer(sentences) :
+
     # Mean Pooling - Take attention mask into account for correct averaging
     def mean_pooling(model_output, attention_mask):
         token_embeddings = model_output[0]  # First element of model_output contains all token embeddings
         input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
         return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
-
     # Load model from HuggingFace Hub
-    tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/bert-base-nli-mean-tokens')
-    model = AutoModel.from_pretrained('sentence-transformers/bert-base-nli-mean-tokens')
+    tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
+    model = AutoModel.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
 
     # Tokenize sentences
     encoded_input = tokenizer(sentences, padding=True, truncation=True, return_tensors='pt')
 
     # Compute token embeddings
     with torch.no_grad():
-        model_output = model(**encoded_input.to(device)).to(device)
+        model_output = model(**encoded_input)
 
-    # Perform pooling. In this case, max pooling.
+    # Perform pooling
     sentence_embeddings = mean_pooling(model_output, encoded_input['attention_mask'])
-    cosine_scores = sentence_embeddings
 
-    return cosine_scores
+    # Normalize embeddings
+    sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
+
+
+    #
+    # # Mean Pooling - Take attention mask into account for correct averaging
+    # def mean_pooling(model_output, attention_mask):
+    #     token_embeddings = model_output[0]  # First element of model_output contains all token embeddings
+    #     input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+    #     return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+    #
+    #
+    # # Load model from HuggingFace Hub
+    # tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/bert-base-nli-mean-tokens')
+    # model = AutoModel.from_pretrained('sentence-transformers/bert-base-nli-mean-tokens')
+    #
+    # # Tokenize sentences
+    # encoded_input = tokenizer(sentences, padding=True, truncation=True, return_tensors='pt')
+    #
+    # # Compute token embeddings
+    # with torch.no_grad():
+    #     model_output = model(**encoded_input)
+    #
+    # # Perform pooling. In this case, max pooling.
+    # sentence_embeddings = mean_pooling(model_output, encoded_input['attention_mask'])
+    # cosine_scores = sentence_embeddings
+
+    return sentence_embeddings

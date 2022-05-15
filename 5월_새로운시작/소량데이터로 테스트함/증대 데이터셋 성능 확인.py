@@ -129,13 +129,62 @@ plt.show()
 
 #%%
 import torch
-device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
-cos_score_list = 0
-for data in entailment :
-    data = text_performance_indicators.sentence_transformer(sentences= data, device=device)
-    cos_score_list = cos_score_list + data
+import matplotlib.pyplot as plt
+from sentence_transformers import SentenceTransformer, util
+from tqdm import tqdm
 
-print(f'허깅페이스에서 가져온 센텐스트랜스포머 정확도 => {cos_score_list / len(entailment)}')
+
+device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
+entailment_cos_score_list = []
+count = 0
+for data in tqdm(entailment, desc= " 연관 데이터셋 점수 체크중 : "):
+    data1 = text_performance_indicators.sentence_transformer(sentences= data)
+    cosine_scores = util.pytorch_cos_sim(data1, data1)
+    entailment_cos_score_list.append(cosine_scores[0][1].item())
+    count = count+1
+    if count == 100:
+        break
+plt.title("entailment Dataset cosine similarity")
+plt.xlabel("Data Index")
+plt.ylabel("Score")
+plt.plot(entailment_cos_score_list, 'bo', markersize=5)
+plt.show()
+
+neutral_cos_score_list = []
+count = 0
+for data in tqdm(neutral, desc= " 모호 데이터셋 점수 체크중 : "):
+    data1 = text_performance_indicators.sentence_transformer(sentences= data)
+    cosine_scores = util.pytorch_cos_sim(data1, data1)
+    neutral_cos_score_list.append(cosine_scores[0][1].item())
+    count = count+1
+    if count == 100:
+        break
+plt.title("neutral Dataset cosine similarity")
+plt.xlabel("Data Index")
+plt.ylabel("Score")
+plt.plot(neutral_cos_score_list, 'yo', markersize=5)
+plt.show()
+
+
+contradiction_cos_score_list = []
+count = 0
+for data in tqdm(contradiction, desc= " 모호 데이터셋 점수 체크중 : "):
+    data1 = text_performance_indicators.sentence_transformer(sentences= data)
+    cosine_scores = util.pytorch_cos_sim(data1, data1)
+    contradiction_cos_score_list.append(cosine_scores[0][1].item())
+    count = count+1
+    if count == 100:
+        break
+plt.title("contradiction Dataset cosine similarity")
+plt.xlabel("Data Index")
+plt.ylabel("Score")
+plt.plot(contradiction_cos_score_list, 'ro', markersize=5)
+plt.show()
+
+
+
+        # %%
+
 
 
 """
