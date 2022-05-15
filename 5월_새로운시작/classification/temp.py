@@ -7,7 +7,7 @@ import test
 device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
 seed.set_seed(42)
 model_name= 'roberta-large'
-model_save_path = "save_model/DA_train_Nucleus 1 실험(val제거)/BestModel.pth"
+model_save_path = "save_model/DA_train_Beam 1 실험(val제거)/BestModel.pth"
 
 #저장될 최종 데이터셋 경로 설정
 dataset_path = "dataset/DA_train_Beam 1 실험"

@@ -45,26 +45,27 @@ def manhattan_performance(sentences) :
 
     return manhattan_d[0][0]
 
-def sentence_transformer(doc_list,device) :
+def sentence_transformer(sentences, device) :
+    # Mean Pooling - Take attention mask into account for correct averaging
     def mean_pooling(model_output, attention_mask):
         token_embeddings = model_output[0]  # First element of model_output contains all token embeddings
         input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
-        sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, 1)
-        sum_mask = torch.clamp(input_mask_expanded.sum(1), min=1e-9)
-        return sum_embeddings / sum_mask
+        return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
-    tokenizer = AutoTokenizer.from_pretrained("sentence-transformers/bert-base-nli-mean-tokens")
+
+    # Load model from HuggingFace Hub
+    tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/bert-base-nli-mean-tokens')
+    model = AutoModel.from_pretrained('sentence-transformers/bert-base-nli-mean-tokens')
 
     # Tokenize sentences
-    encoded_input = tokenizer(doc_list.to_list(), padding=True, truncation=True, max_length=200, return_tensors='pt')
+    encoded_input = tokenizer(sentences, padding=True, truncation=True, return_tensors='pt')
 
-    model = AutoModel.from_pretrained("sentence-transformers/bert-base-nli-mean-tokens").to(device)
-
+    # Compute token embeddings
     with torch.no_grad():
-        model_output = model(input_ids=encoded_input["input_ids"].to("cuda"))
+        model_output = model(**encoded_input.to(device)).to(device)
 
-    # Perform pooling. In this case, mean pooling
-    sentence_embeddings = mean_pooling(model_output, encoded_input['attention_mask'].to(device))
+    # Perform pooling. In this case, max pooling.
+    sentence_embeddings = mean_pooling(model_output, encoded_input['attention_mask'])
+    cosine_scores = sentence_embeddings
 
-    cosine_scores = util.pytorch_cos_sim(sentence_embeddings, sentence_embeddings)
     return cosine_scores

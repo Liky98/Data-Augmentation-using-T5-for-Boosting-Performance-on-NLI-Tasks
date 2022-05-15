@@ -128,6 +128,16 @@ plt.show()
 
 
 #%%
+import torch
+device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
+cos_score_list = 0
+for data in entailment :
+    data = text_performance_indicators.sentence_transformer(sentences= data, device=device)
+    cos_score_list = cos_score_list + data
+
+print(f'허깅페이스에서 가져온 센텐스트랜스포머 정확도 => {cos_score_list / len(entailment)}')
+
+
 """
 data1 = text_performance_indicators.cos_performance(entailment[0])
 data2 = text_performance_indicators.euclidean_performance(entailment[0])
