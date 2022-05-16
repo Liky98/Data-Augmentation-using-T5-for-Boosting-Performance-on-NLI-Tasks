@@ -181,8 +181,24 @@ plt.ylabel("Score")
 plt.plot(contradiction_cos_score_list, 'ro', markersize=5)
 plt.show()
 
+#%%
+plt.title("Dataset cosine similarity")
+plt.xlabel("Data Index")
+plt.ylabel("Score")
+plt.plot(neutral_cos_score_list, 'yo', markersize=5, label= "neutral")
+plt.plot(contradiction_cos_score_list, 'ro', markersize=5, label= "contradiction")
+plt.plot(entailment_cos_score_list, 'bo', markersize=5, label= "entailment")
+plt.legend()
+plt.show()
+#%%
+label = ["entailment", "neutral", "contradiction"]
+plt.boxplot([entailment_cos_score_list,neutral_cos_score_list,contradiction_cos_score_list])
+plt.xlabel(label)
+plt.legend()
+#plt.boxplot(neutral_cos_score_list)
+#plt.boxplot(contradiction_cos_score_list)
 
-
+plt.show()
         # %%
 
 
