@@ -4,8 +4,8 @@ from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 
-file_path = "DA_train_Nucleus 1 실험.csv"
-#file_path = "../../Data/SNLI/SNLI_train.csv"
+#file_path = "DA_train_Nucleus 1 실험.csv"
+file_path = "../../Data/SNLI/SNLI_dev.csv"
 file = pd.read_csv(file_path)
 file.dropna()
 
@@ -126,6 +126,11 @@ plt.plot(neutral_performance_cos,'yo', markersize=0.5)
 plt.plot(contradiction_performance_cos,'ro', markersize=0.5)
 plt.show()
 
+label = ["entailment", "neutral", "contradiction"]
+plt.boxplot([entailment_performance_cos,neutral_performance_cos,contradiction_performance_cos])
+plt.xlabel(label)
+plt.show()
+
 
 #%%
 import torch
@@ -195,12 +200,16 @@ label = ["entailment", "neutral", "contradiction"]
 plt.boxplot([entailment_cos_score_list,neutral_cos_score_list,contradiction_cos_score_list])
 plt.xlabel(label)
 plt.legend()
-#plt.boxplot(neutral_cos_score_list)
-#plt.boxplot(contradiction_cos_score_list)
 
 plt.show()
-        # %%
+ # %%
+print(file_path)
+print("0:연관, 1:모호, 2:모순  // 평균")
+print(np.mean(entailment_cos_score_list))
+print(np.mean(neutral_cos_score_list))
+print(np.mean(contradiction_cos_score_list))
 
+#%%
 
 
 """
