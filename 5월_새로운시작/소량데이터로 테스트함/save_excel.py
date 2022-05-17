@@ -14,7 +14,7 @@ def integrated_csv(save_path, contradiction_csv,entailment_csv,neutral_csv) :
     dataset_size = round(len(da_dataset) / 10) * 8
     da_dataset[:dataset_size].to_csv('DA_train_{}.csv'.format(save_path), index=False)
     da_dataset[dataset_size:].to_csv('DA_val_{}.csv'.format(save_path), index=False)
-
+    da_dataset.to_csv('DA_{}.csv'.format(save_path), index = False)
     return da_dataset
 
 if __name__ == "__main__" :
