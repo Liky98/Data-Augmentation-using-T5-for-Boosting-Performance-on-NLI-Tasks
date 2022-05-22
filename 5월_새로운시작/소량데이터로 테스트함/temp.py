@@ -1,14 +1,6 @@
+import s_score
 
-import seed
-import data_processing
-import model_train
-import torch
-import Decoder
-import save_excel
-import text_performance_indicators
-import pandas
-seed.set_seed(42)
-
-# 연관 데이터셋 제작
-contradiction_file_name = "DA_train_Nucleus 1 실험.csv"
+import pandas as pd
+dataset_before = pd.read_csv("DA_(0517)t5base, trainData_500, nucleus_sampling, data_10000.csv")
+dataset_after = s_score.cos_simiraty(dataset_before)
 

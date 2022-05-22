@@ -54,8 +54,8 @@ def sentence_transformer(sentences) :
         return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
     # Load model from HuggingFace Hub
-    tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
-    model = AutoModel.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
+    tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/all-MiniLM-L6-v2', local_files_only=True)
+    model = AutoModel.from_pretrained('sentence-transformers/all-MiniLM-L6-v2', local_files_only=True)
 
     # Tokenize sentences
     encoded_input = tokenizer(sentences, padding=True, truncation=True, return_tensors='pt')
