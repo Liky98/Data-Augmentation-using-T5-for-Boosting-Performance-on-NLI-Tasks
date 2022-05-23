@@ -5,7 +5,7 @@ from datasets import load_dataset,DatasetDict
 import pandas as pd
 import sklearn
 
-def snli_data_load(final_dataset_path, da_train_csv_path, da_val_csv_path):
+def snli_data_load(final_dataset_path, da_train_csv_path):
     try :
         dataset = DatasetDict.load_from_disk(final_dataset_path)
         return dataset
