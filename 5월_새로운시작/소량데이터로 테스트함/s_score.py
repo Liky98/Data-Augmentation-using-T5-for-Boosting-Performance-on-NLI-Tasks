@@ -4,7 +4,7 @@ from sentence_transformers import util
 import save_excel
 import pandas as pd
 from datetime import datetime
-def cos_simiraty(dataset) :
+def cos_simiraty(dataset, path) :
     processing_dataset = []
 
 
@@ -12,8 +12,8 @@ def cos_simiraty(dataset) :
 
         data1 = text_performance_indicators.sentence_transformer(sentences=[dataset["premise"][i],dataset["hypothesis"][i]])
         cosine_scores = util.pytorch_cos_sim(data1, data1)
-        print(dataset["label"][i])
-        print(cosine_scores[0][1].item())
+        # print(dataset["label"][i])
+        # print(cosine_scores[0][1].item())
         if dataset["label"][i] == 0 :
             if cosine_scores[0][1].item() >0.7 :
                 processing_dataset.append([dataset["premise"][i],dataset["hypothesis"][i],dataset["label"][i]])
@@ -26,7 +26,7 @@ def cos_simiraty(dataset) :
 
     df = pd.DataFrame(processing_dataset, columns=["premise", "hypothesis", "label"])
 
-    df.to_csv('processing05022.csv', index=False)
+    df.to_csv('{}processing.csv'.format(path), index=False)
     print(f" 데이터 증대 개수 : {len(df)}")
 
 if __name__ == "__main__":
