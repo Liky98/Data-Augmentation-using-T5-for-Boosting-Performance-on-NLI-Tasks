@@ -63,13 +63,13 @@ def dataloader(model_name, dataset) :
     #데이터로더 정의
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
     train_dataloader = DataLoader(
-        tokenized_datasets["train"], shuffle=True, batch_size=32, collate_fn=data_collator
+        tokenized_datasets["train"], shuffle=True, batch_size=16, collate_fn=data_collator
     )
     eval_dataloader = DataLoader(
-        tokenized_datasets["validation"], batch_size=32, collate_fn=data_collator
+        tokenized_datasets["validation"], batch_size=16, collate_fn=data_collator
     )
     test_dataloader = DataLoader(
-        tokenized_datasets["test"], batch_size=32, collate_fn=data_collator
+        tokenized_datasets["test"], batch_size=16, collate_fn=data_collator
     )
 
     return train_dataloader, eval_dataloader, test_dataloader

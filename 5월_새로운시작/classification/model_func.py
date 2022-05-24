@@ -63,10 +63,7 @@ def model_train(model_name, train_dataloader, dev_dataloader, device,save_path, 
 
         if max(accuracy_list) <= acc :
             torch.save(model, final_path)
-        else:
-            print("정확도 저하로 인한 학습 조기 종료")
-            break
+
 
     return best_model_path, accuracy_list
 
-#%%
