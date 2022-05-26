@@ -45,6 +45,30 @@ def snli_data_load(final_dataset_path, da_train_csv_path):
 
         return dataset
 
+def data_load_noRawDatset(final_dataset_path, da_train_csv_path):
+    try :
+        dataset = DatasetDict.load_from_disk(final_dataset_path)
+        return dataset
+    except :
+        # 데이터 가져오기
+
+        val_dataset_path = "../../Data/SNLI/SNLI_dev.csv"
+        test_dataset_path = "../../Data/SNLI/SNLI_test.csv"
+
+
+        data_files = {"train": da_train_csv_path,
+                      "validation": val_dataset_path,
+                      "test": test_dataset_path}
+
+        dataset = load_dataset("csv", data_files=data_files)
+
+        dataset.save_to_disk(final_dataset_path)
+
+        print(f"Train Dataset => {dataset['train'].num_rows}")
+        print(f"Validation Dataset => {dataset['validation'].num_rows}")
+        print(f"Test Dataset => {dataset['test'].num_rows}")
+
+        return dataset
 
 def dataloader(model_name, dataset) :
     #토크나이저 설정

@@ -7,16 +7,16 @@ import test
 device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
 seed.set_seed(42)
 model_name= 'roberta-large'
-model_save_path = "save_model/500Few_Nucleus/"
+model_save_path = "save_model/500Few_Nucleus(NoRaw)/"
 
 #저장될 최종 데이터셋 경로 설정
-dataset_path = "dataset/500Few_Nucleus"
+dataset_path = "dataset/500Few_Nucleus(NoRaw)"
 
 #증대 데이터만 합쳐논 DataDict path
-da_train_csv_path = "../소량데이터로 테스트함/500Few_Nucleus 실험/processing.csv"
-
-dataset = data_loader.snli_data_load(final_dataset_path = dataset_path,
-                                     da_train_csv_path=da_train_csv_path
+da_train_csv_path = "../소량데이터로 테스트함/데이터셋/DA_val_(0517)t5base, trainData_500, nucleus_sampling, data_10000.csv"
+da_all_csv_path = "../소량데이터로 테스트함/데이터셋/DA_(0517)t5base, trainData_500, nucleus_sampling, data_10000.csv"
+dataset = data_loader.data_load_noRawDatset(final_dataset_path = dataset_path,
+                                     da_train_csv_path=da_all_csv_path
                                      )
 
 train_dataloader, validation_dataloader, test_dataloader = data_loader.dataloader(model_name= model_name,
@@ -32,6 +32,7 @@ model_path, accuracy_mean_list = model_func.model_train(model_name= model_name,
                                               num_epochs = 10,
                                               num_label = 3
                                               )
+
 best_model = torch.load(model_save_path+model_path)
 
 prediction_list, label_list = test.test(test_dataloader=test_dataloader,

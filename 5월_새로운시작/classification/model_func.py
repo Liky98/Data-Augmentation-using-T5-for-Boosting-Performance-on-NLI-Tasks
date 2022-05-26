@@ -66,4 +66,3 @@ def model_train(model_name, train_dataloader, dev_dataloader, device,save_path, 
 
 
     return best_model_path, accuracy_list
-
