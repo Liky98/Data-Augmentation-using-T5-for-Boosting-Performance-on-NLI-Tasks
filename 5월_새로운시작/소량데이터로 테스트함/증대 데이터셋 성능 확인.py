@@ -147,8 +147,8 @@ for data in tqdm(entailment, desc= " 연관 데이터셋 점수 체크중 : "):
     cosine_scores = util.pytorch_cos_sim(data1, data1)
     entailment_cos_score_list.append(cosine_scores[0][1].item())
     count = count+1
-    if count == 100:
-        break
+    # if count == 100:
+    #     break
 plt.title("entailment Dataset cosine similarity")
 plt.xlabel("Data Index")
 plt.ylabel("Score")
@@ -162,8 +162,8 @@ for data in tqdm(neutral, desc= " 모호 데이터셋 점수 체크중 : "):
     cosine_scores = util.pytorch_cos_sim(data1, data1)
     neutral_cos_score_list.append(cosine_scores[0][1].item())
     count = count+1
-    if count == 100:
-        break
+    # if count == 100:
+    #     break
 plt.title("neutral Dataset cosine similarity")
 plt.xlabel("Data Index")
 plt.ylabel("Score")
@@ -178,8 +178,8 @@ for data in tqdm(contradiction, desc= " 모호 데이터셋 점수 체크중 : "
     cosine_scores = util.pytorch_cos_sim(data1, data1)
     contradiction_cos_score_list.append(cosine_scores[0][1].item())
     count = count+1
-    if count == 100:
-        break
+    # if count == 100:
+    #     break
 plt.title("contradiction Dataset cosine similarity")
 plt.xlabel("Data Index")
 plt.ylabel("Score")
@@ -210,34 +210,35 @@ print(np.mean(neutral_cos_score_list))
 print(np.mean(contradiction_cos_score_list))
 
 #%%
-
-
-"""
-data1 = text_performance_indicators.cos_performance(entailment[0])
-data2 = text_performance_indicators.euclidean_performance(entailment[0])
-data3 = text_performance_indicators.manhattan_performance(entailment[0])
-print(entailment[0])
-print(data1)
-print(data2)
-print(data3)
+Q1 = np.percentile(entailment_cos_score_list, 25)
+Q2 = np.percentile(entailment_cos_score_list, 50)
+Q3 = np.percentile(entailment_cos_score_list, 75)
+temp = np.mean(entailment_cos_score_list)
+print('연관된 데이터셋')
+print(f'Q1 > {Q1}')
+print(f'Q2 > {Q2}')
+print(f'Q3 > {Q3}')
+print(f'데이터의 평균 값 > {temp}')
 print()
 
-data1 = text_performance_indicators.cos_performance(entailment[1])
-data2 = text_performance_indicators.euclidean_performance(entailment[1])
-data3 = text_performance_indicators.manhattan_performance(entailment[1])
-print(entailment[1])
-print(data1)
-print(data2)
-print(data3)
+Q1 = np.percentile(neutral_cos_score_list, 25)
+Q2 = np.percentile(neutral_cos_score_list, 50)
+Q3 = np.percentile(neutral_cos_score_list, 75)
+temp = np.mean(neutral_cos_score_list)
+print('모호한 데이터셋')
+print(f'Q1 > {Q1}')
+print(f'Q2 > {Q2}')
+print(f'Q3 > {Q3}')
+print(f'데이터의 평균 값 > {temp}')
 print()
 
-data1 = text_performance_indicators.cos_performance(entailment[2])
-data2 = text_performance_indicators.euclidean_performance(entailment[2])
-data3 = text_performance_indicators.manhattan_performance(entailment[2])
-print(entailment[2])
-print(data1)
-print(data2)
-print(data3)
+Q1 = np.percentile(contradiction_cos_score_list, 25)
+Q2 = np.percentile(contradiction_cos_score_list, 50)
+Q3 = np.percentile(contradiction_cos_score_list, 75)
+temp = np.mean(contradiction_cos_score_list)
+print('모순된 데이터셋')
+print(f'Q1 > {Q1}')
+print(f'Q2 > {Q2}')
+print(f'Q3 > {Q3}')
+print(f'데이터의 평균 값 > {temp}')
 print()
-
-"""

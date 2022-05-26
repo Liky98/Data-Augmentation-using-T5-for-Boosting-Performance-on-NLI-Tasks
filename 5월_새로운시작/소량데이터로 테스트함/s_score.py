@@ -14,13 +14,13 @@ def cos_simiraty(dataset, path) :
             # print(dataset["label"][i])
             # print(cosine_scores[0][1].item())
             if dataset["label"][i] == 0 :
-                if cosine_scores[0][1].item() >0.7 :
+                if cosine_scores[0][1].item() >0.5622 and cosine_scores[0][1].item()<0.7709 :
                     processing_dataset.append([dataset["premise"][i],dataset["hypothesis"][i],dataset["label"][i]])
             elif dataset["label"][i] == 1 :
-                if cosine_scores[0][1].item() >0.4 and cosine_scores[0][1].item() < 0.7  :
+                if cosine_scores[0][1].item() >0.1931 and cosine_scores[0][1].item() < 0.4694  :
                     processing_dataset.append([dataset["premise"][i],dataset["hypothesis"][i],dataset["label"][i]])
             elif dataset["label"][i] == 2:
-                if cosine_scores[0][1].item() < 0.4 :
+                if cosine_scores[0][1].item() >0.3970 and cosine_scores[0][1].item() < 0.6432 :
                     processing_dataset.append([dataset["premise"][i],dataset["hypothesis"][i],dataset["label"][i]])
         except:
             pass
