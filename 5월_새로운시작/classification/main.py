@@ -7,10 +7,10 @@ import test
 device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
 seed.set_seed(42)
 model_name= 'roberta-large'
-model_save_path = "save_model/500Few_Nucleus(NoRaw)/"
+model_save_path = "save_model/100Few_Beams/"
 
 #저장될 최종 데이터셋 경로 설정
-dataset_path = "dataset/500Few_Nucleus(NoRaw)"
+dataset_path = "dataset/100Few_Beams"
 
 #증대 데이터만 합쳐논 DataDict path
 da_train_csv_path = "../소량데이터로 테스트함/데이터셋/DA_val_(0517)t5base, trainData_500, nucleus_sampling, data_10000.csv"

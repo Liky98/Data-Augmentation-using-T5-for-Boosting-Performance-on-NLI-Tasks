@@ -77,9 +77,9 @@ contradiction_outputs = Decoder.generation_sentence(model=contradiction_model,
                                       )
 
 save_excel.save_csv(contradiction_outputs, contradiction_file_name,label=2)
-
+#%%
 #데이터셋 통합
-data_save_path = "(Raw)t5base, trainData_100, nucleus_sampling, data_10000"
+data_save_path = "(Raw)t5base, trainData_100, beam_search, data_10000"
 
 dataset_before = save_excel.integrated_csv(save_path = data_save_path,
                           contradiction_csv = 'DA_{}.csv'.format(contradiction_file_name),
@@ -89,7 +89,7 @@ dataset_before = save_excel.integrated_csv(save_path = data_save_path,
 
 
 #dataset_before = pd.read_csv("DA_(Raw)t5base, trainData_500, beam_search, data_10000.csv")
-dataset_after = s_score.cos_simiraty(dataset_before)
+dataset_after = s_score.cos_simiraty(dataset_before,"0526")
 
 
 
