@@ -13,6 +13,7 @@ def cos_simiraty(dataset, path) :
             cosine_scores = util.pytorch_cos_sim(data1, data1)
             # print(dataset["label"][i])
             # print(cosine_scores[0][1].item())
+
             if dataset["label"][i] == 0 :
                 if cosine_scores[0][1].item() >0.5622 and cosine_scores[0][1].item()<0.7709 :
                     processing_dataset.append([dataset["premise"][i],dataset["hypothesis"][i],dataset["label"][i]])
