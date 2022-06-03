@@ -30,5 +30,6 @@ wordnet.synsets('shoot')    # 단어에 대한 동의어 집합
 #%%
 app = wordnet.synset('apple.n.01')
 print(app.definition()) # 표제어의 c단어 정의
-app.lemma_names() # 동의어 단어 집합
-app.draw()
+print(app.lemma_names()) # 동의어 단어 집합
+
+
