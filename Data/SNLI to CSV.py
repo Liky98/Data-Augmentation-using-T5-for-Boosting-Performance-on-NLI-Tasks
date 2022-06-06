@@ -12,7 +12,7 @@ train_path = SNLI_path + "snli_1.0_train.jsonl"
 dev_path = SNLI_path + "snli_1.0_dev.jsonl"
 test_path = SNLI_path + "snli_1.0_test.jsonl"
 
-label2class = {'entailment': 0, 'contradiction': 1, 'neutral': 2} # 연관, 모순, 중립
+label2class = {'entailment': 0, 'contradiction': 2, 'neutral': 1} # 연관, 모순, 중립
 
 def _formatting(line):
     row = json.loads(line)
@@ -22,7 +22,7 @@ def _formatting(line):
     return x_1, x_2, y
 
 x_train_1, x_train_2, y_train = [], [], []      # Train 데이터 len() = 549,367
-with open(train_path, encoding='utf8') as f:
+with open(test_path, encoding='utf8') as f:
     for line in f:
         try:
             x_1, x_2, y = _formatting(line)
@@ -33,7 +33,7 @@ with open(train_path, encoding='utf8') as f:
             continue
 
 train_samples = []
-f=open('SNLI_train.csv', 'w', newline='')
+f=open('SNLI_test.csv', 'w', newline='')
 
 for i in range(len(x_train_1)):
     wr = csv.writer(f)
