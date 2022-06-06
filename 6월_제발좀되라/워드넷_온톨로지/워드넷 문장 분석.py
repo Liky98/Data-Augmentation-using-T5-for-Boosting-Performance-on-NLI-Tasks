@@ -42,6 +42,12 @@ for sentence in sentences :
 # print(app.lemma_names()) # 동의어 단어 집합
 
 #%%
-hers = "herself"
-print(wordnet.synsets(hers))
+a = "will"
+print(wordnet.synsets(a))
+
+b= wordnet.synsets(a)
+print(b[1].lemma_names())
+print(b[1].lemmas())
+print(b[1].Antonyms)
+
 #print(wordnet.synset('dog.n.01').lemmas() )
