@@ -7,17 +7,17 @@ sentences = [
 ]
 
 #토크나이저로 문장 자르기
-# for sentences in sentence :
-#     tokens = nltk.word_tokenize(sentences[0])
-#     print(tokens)
-#     tagged = nltk.pos_tag(tokens)
-#     print(tagged)
-#     print()
-#     tokens = nltk.word_tokenize(sentences[1])
-#     print(tokens)
-#     tagged = nltk.pos_tag(tokens)
-#     print(tagged)
-#     break
+for sentence in sentences :
+    tokens = nltk.word_tokenize(sentence[0])
+    print(tokens)
+    tagged = nltk.pos_tag(tokens)
+    print(tagged)
+    print()
+    tokens = nltk.word_tokenize(sentence[1])
+    print(tokens)
+    tagged = nltk.pos_tag(tokens)
+    print(tagged)
+    break
 
 for sentence in sentences :
     sentence1 = sentence[0]
@@ -40,3 +40,8 @@ for sentence in sentences :
 # app = wordnet.synset('apple.n.01')
 # print(app.definition()) # 표제어의 c단어 정의
 # print(app.lemma_names()) # 동의어 단어 집합
+
+#%%
+hers = "herself"
+print(wordnet.synsets(hers))
+#print(wordnet.synset('dog.n.01').lemmas() )
