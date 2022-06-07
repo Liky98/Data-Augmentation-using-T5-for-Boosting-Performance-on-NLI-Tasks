@@ -15,13 +15,13 @@ def cos_simiraty(dataset, path) :
             # print(cosine_scores[0][1].item())
 
             if dataset["label"][i] == 0 :
-                if cosine_scores[0][1].item() >0.5622 and cosine_scores[0][1].item()<0.7710 :
+                if cosine_scores[0][1].item() >0.5622 :
                     processing_dataset.append([dataset["premise"][i],dataset["hypothesis"][i],dataset["label"][i]])
             elif dataset["label"][i] == 1 :
                 if cosine_scores[0][1].item() >0.3971 and cosine_scores[0][1].item() < 0.6432  :
                     processing_dataset.append([dataset["premise"][i],dataset["hypothesis"][i],dataset["label"][i]])
             elif dataset["label"][i] == 2:
-                if cosine_scores[0][1].item() >0.1931 and cosine_scores[0][1].item() < 0.4694 :
+                if cosine_scores[0][1].item() < 0.4694 :
                     processing_dataset.append([dataset["premise"][i],dataset["hypothesis"][i],dataset["label"][i]])
         except:
             pass
@@ -32,6 +32,6 @@ def cos_simiraty(dataset, path) :
 
 if __name__ == "__main__":
     print("안녕")
-    #dataset = "DA_(0517)t5base, trainData_500, nucleus_sampling, data_10000.csv"
-    #dataset = pd.read_csv(dataset)
-    #cos_simiraty(dataset)
+    dataset = "(0607)Few1000.csv"
+    dataset = pd.read_csv(dataset)
+    cos_simiraty(dataset,"테스트")
