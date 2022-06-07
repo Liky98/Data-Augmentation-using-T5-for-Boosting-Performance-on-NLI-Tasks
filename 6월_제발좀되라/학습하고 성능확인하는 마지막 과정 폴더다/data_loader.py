@@ -11,9 +11,9 @@ def snli_data_load(final_dataset_path, da_train_csv_path):
         return dataset
     except :
         # 데이터 가져오기
-        train_dataset_path = "../../Data/SNLI/SNLI_train.csv"
-        val_dataset_path = "../../Data/SNLI/SNLI_dev.csv"
-        test_dataset_path = "../../Data/SNLI/SNLI_test.csv"
+        train_dataset_path = "../../Data/SNLI_train.csv"
+        val_dataset_path = "../../Data/SNLI_dev.csv"
+        test_dataset_path = "../../Data/SNLI_test.csv"
 
         dataFrame = pd.concat(
             map(pd.read_csv, [train_dataset_path, da_train_csv_path]), ignore_index=False)
@@ -43,8 +43,8 @@ def data_load_noRawDatset(final_dataset_path, da_train_csv_path):
     except :
         # 데이터 가져오기
 
-        val_dataset_path = "../../Data/SNLI/SNLI_dev.csv"
-        test_dataset_path = "../../Data/SNLI/SNLI_test.csv"
+        val_dataset_path = "../../Data/SNLI_dev.csv"
+        test_dataset_path = "../../Data/SNLI_test.csv"
 
 
         data_files = {"train": da_train_csv_path,

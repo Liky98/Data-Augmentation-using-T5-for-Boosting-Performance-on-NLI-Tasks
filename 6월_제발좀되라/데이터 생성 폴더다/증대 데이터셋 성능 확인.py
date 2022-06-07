@@ -4,7 +4,7 @@ from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 
-file_path = "../../Data/SNLI/SNLI_dev.csv"
+file_path = "../../Data/SNLI_dev.csv"
 file = pd.read_csv(file_path)
 file.dropna()
 
@@ -35,37 +35,37 @@ for i in tqdm(range(len(file)), desc="데이터 분류 중 ") :
         contradiction.append([file["premise"][i], file["hypothesis"][i]])
 
 
-def cos_performance(dataset, save_list) :
-    for sentence in tqdm(dataset, desc="{} 데이터셋 코사인 유사도 측정".format(dataset)):
+def cos_performance(dataset, dataset2,save_list) :
+    for sentence in tqdm(dataset, desc="{} 데이터셋 코사인 유사도 측정".format(dataset2)):
         try:
             save_list.append(text_performance_indicators.cos_performance(sentence))
         except:
             pass
 
-def euclidean_performance(dataset, save_list) :
-    for sentence in tqdm(dataset, desc="{} 데이터셋 유클리디언 유사도 측정".format(dataset)) :
+def euclidean_performance(dataset,dataset2, save_list) :
+    for sentence in tqdm(dataset, desc="{} 데이터셋 유클리디언 유사도 측정".format(dataset2)) :
         try:
             save_list.append(text_performance_indicators.euclidean_performance(sentence))
         except:
             pass
-def manhattan_performance(dataset, save_list) :
-    for sentence in tqdm(dataset, desc="{} 데이터셋 맨하탄 유사도 측정".format(dataset)) :
+def manhattan_performance(dataset,dataset2, save_list) :
+    for sentence in tqdm(dataset, desc="{} 데이터셋 맨하탄 유사도 측정".format(dataset2)) :
         try:
             save_list.append(text_performance_indicators.manhattan_performance(sentence))
         except:
             pass
 
-cos_performance(entailment, entailment_performance_cos)
-cos_performance(neutral, neutral_performance_cos)
-cos_performance(contradiction, contradiction_performance_cos)
+cos_performance(entailment,"entailment", entailment_performance_cos)
+cos_performance(neutral,"neutral", neutral_performance_cos)
+cos_performance(contradiction,"contradiction", contradiction_performance_cos)
 
-euclidean_performance(entailment, entailment_performance_euclidean)
-euclidean_performance(neutral, neutral_performance_euclidean)
-euclidean_performance(contradiction, contradiction_performance_euclidean)
+euclidean_performance(entailment, "entailment",entailment_performance_euclidean)
+euclidean_performance(neutral,"neutral", neutral_performance_euclidean)
+euclidean_performance(contradiction, "contradiction",contradiction_performance_euclidean)
 
-manhattan_performance(entailment, entailment_performance_manhattan)
-manhattan_performance(neutral, neutral_performance_manhattan)
-manhattan_performance(contradiction, contradiction_performance_manhattan)
+manhattan_performance(entailment,"entailment", entailment_performance_manhattan)
+manhattan_performance(neutral,"neutral", neutral_performance_manhattan)
+manhattan_performance(contradiction, "contradiction",contradiction_performance_manhattan)
 
 print(file_path)
 
