@@ -52,13 +52,24 @@ def sentence_similarity(sentence1, sentence2):
 
     score, count = 0.0, 0
 
-
     for synset in synsets1: #문장1에 있는 단어 하나씩, 문장2에 모든 단어와 비교해서 가장 큰 값
-        best_score = max([synset.wup_similarity(ss) for ss in synsets2])#path_similarity, lch_similarity, wup_similarity
+        temp_score = 0
+        for ss in synsets2 :
+            try:
+                score += synset.path_similarity(ss)  # 점수 추가하고 카운트
+                temp_score += synset.path_similarity(ss)  # 점수 추가하고 카운트
 
-        if best_score is not None: #만약 점수가 나오면
-            score += best_score #점수 추가하고 카운트
-            count += 1
+                count +=1
+            except :
+                pass
+
+
+        #
+        # best_score = max([synset.lch_similarity(ss) for ss in synsets2])#path_similarity, lch_similarity, wup_similarity
+        # print(best_score)
+        # if best_score is not None: #만약 점수가 나오면
+        #     score += best_score #점수 추가하고 카운트
+        #     count += 1
 
     score /= count #점수를 단어 수로 나눠줌
     return score
@@ -69,7 +80,14 @@ def symmetric_sentence_similarity(sentence1, sentence2):
     return (sentence_similarity(sentence1, sentence2) + sentence_similarity(sentence2, sentence1)) / 2
 
 
-dataset = pd.read_csv("../../Data/SNLI_dev.csv")
+#symmetric_sentence_similarity("A man in a black shirt is playing a guitar.",	"The man is wearing a blue shirt.")
+#print(sentence_similarity("The black dog is taking a walk.",	"The white cat is taking a walk."))
+
+
+
+
+
+dataset = pd.read_csv("../../Data/SNLI_test.csv")
 
 premise = dataset['premise']
 hypothesis = dataset['hypothesis']
@@ -80,7 +98,7 @@ score_list1 = []
 score_list2 = []
 for i in tqdm(range(len(premise))) :
     try:
-        score = symmetric_sentence_similarity(premise[i],hypothesis[i])
+        score = sentence_similarity(premise[i],hypothesis[i])
 
         if label[i] == 0 :
             score_list0.append(score)
@@ -102,5 +120,5 @@ plt.boxplot([score_list0, score_list1, score_list2])
 plt.xlabel(label)
 plt.legend()
 plt.show()
-#%%
-print(symmetric_sentence_similarity("A man in a black shirt is playing a guitar.",	"The man is wearing a blue shirt."))
+
+
