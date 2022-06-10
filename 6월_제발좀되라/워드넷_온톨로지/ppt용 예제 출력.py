@@ -63,7 +63,6 @@ def sentence_similarity(sentence1, sentence2):
             except :
                 pass
 
-
         #
         # best_score = max([synset.lch_similarity(ss) for ss in synsets2])#path_similarity, lch_similarity, wup_similarity
         # print(best_score)
