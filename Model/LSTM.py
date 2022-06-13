@@ -7,6 +7,9 @@ args = argparse.ArgumentParser() # 인자값 받을 수 있는 인스턴스 생�
 args.add_argument("--input_size", default=16, type = int, help='LSTM Model Input size')
 args.add_argument("--hidden_size", default=16, type= int, help='LSTM')
 args.add_argument("--dropout", default=0.3, type=float, help='LSTM')
+args.add_argument("--num_classes", default=0.3, type=float, help='LSTM')
+args.add_argument("--num_layers", default=0.3, type=float, help='LSTM')
+args.add_argument("--seq_length", default=0.3, type=float, help='LSTM')
 args = args.parse_args() #내용 저장
 
 
@@ -30,7 +33,37 @@ class LSTM(nn.Module):
         return model
 
 
+class LSTM2(nn.Module):
+    def __init__(self, args):
+        super(LSTM2,self).__init__()
 
+        self.num_classes = args.num_classes
+        self.num_layers = args.num_layers
+        self.input_size = args.input_size
+        self.hidden_size = args.hidden_size
+        self.seq_length = args.seq_length
+
+        self.lstm = nn.LSTM(input_size=args.input_size,
+                            hidden_size= args.hidden_size,
+                            num_layers= args.num_layers,
+                            dropout= args.dropout,
+                            batch_first=True) # 미니배치를 앞으로 ex) [20,5] > [5,20]
+
+        self.fc = nn.Linear(args.hidden_size, args.num_classes)
+
+    def forward(self,x):
+        hidden = Variable(torch.zeros(self.num_layers,   #hidden 초기값
+                                x.size(0),
+                                self.hidden_size
+                                ))
+        cell_state = Variable(torch.zeros(self.num_layers, #cell state 초기값
+                        x.size(0),
+                        self.hidden_size
+                        ))
+
+        output, hidden = self.lstm(x,(hidden,cell_state))
+        hidden_output = hidden.view(-1, self.hidden_size)
+        out = self.fc(hidden_output)
 
 
 
