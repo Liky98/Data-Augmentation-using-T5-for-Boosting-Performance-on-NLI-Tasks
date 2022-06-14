@@ -7,9 +7,9 @@ args = argparse.ArgumentParser() # 인자값 받을 수 있는 인스턴스 생�
 args.add_argument("--input_size", default=16, type = int, help='LSTM Model Input size')
 args.add_argument("--hidden_size", default=16, type= int, help='LSTM')
 args.add_argument("--dropout", default=0.3, type=float, help='LSTM')
-args.add_argument("--num_classes", default=0.3, type=float, help='LSTM')
-args.add_argument("--num_layers", default=0.3, type=float, help='LSTM')
-args.add_argument("--seq_length", default=0.3, type=float, help='LSTM')
+args.add_argument("--num_classes", default=1, type=int, help='LSTM')
+args.add_argument("--num_layers", default=1, type=int, help='LSTM')
+args.add_argument("--seq_length", default=128, type=int, help='LSTM')
 args = args.parse_args() #내용 저장
 
 
@@ -61,9 +61,9 @@ class LSTM2(nn.Module):
                         self.hidden_size
                         ))
 
-        output, hidden = self.lstm(x,(hidden,cell_state))
-        hidden_output = hidden.view(-1, self.hidden_size)
+        output, (hidden_next,cell_state_next) = self.lstm(x,(hidden,cell_state))
+        hidden_output = hidden_next.view(-1, self.hidden_size)
         out = self.fc(hidden_output)
 
-
+        return out
 
