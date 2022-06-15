@@ -28,15 +28,17 @@ tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 print(raw_data[0])
 
 label = 1
-
-
-model           = LSTM.LSTM(args)
-loss_function   = torch.nn.MSELoss()
-optimizer       = torch.optim.Adam(model.parameters(), lr= args.learning_rate)
+#%%
+print(tokenizer.tokenize(raw_data[0]))
+#%%
+model = LSTM.LSTM(args)
+loss_function = torch.nn.MSELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr= args.learning_rate)
 
 for epoch in range(args.num_epochs) :
     for data in raw_data :
         data = tokenizer.tokenize(data)
+
         output = model(data)
         optimizer.zero_grad()
 
