@@ -3,19 +3,6 @@ import torch.nn as nn
 import torch
 from torch.autograd import Variable
 
-args = argparse.ArgumentParser() # 인자값 받을 수 있는 인스턴스 생성
-args.add_argument("--input_size", default=16, type = int, help='LSTM Model Input size')
-args.add_argument("--hidden_size", default=16, type= int, help='LSTM')
-args.add_argument("--dropout", default=0.3, type=float, help='LSTM')
-args.add_argument("--num_classes", default=1, type=int, help='LSTM')
-args.add_argument("--num_layers", default=1, type=int, help='LSTM')
-args.add_argument("--seq_length", default=128, type=int, help='LSTM')
-args = args.parse_args() #내용 저장
-
-
-n_input_size = 16
-n_hidden_size = 8
-
 
 class LSTM(nn.Module):
     def __init__(self, args):
@@ -35,7 +22,7 @@ class LSTM(nn.Module):
 
 class LSTM_RNN기반(nn.Module):
     def __init__(self, args):
-        super(LSTM2,self).__init__()
+        super(LSTM_RNN기반,self).__init__()
 
         self.num_classes = args.num_classes
         self.num_layers = args.num_layers
@@ -51,7 +38,7 @@ class LSTM_RNN기반(nn.Module):
 
         self.fc = nn.Linear(args.hidden_size, args.num_classes)
 
-    def forward(self,x):
+    def forward(self, x):
         hidden = Variable(torch.zeros(self.num_layers,   #hidden 초기값
                                 x.size(0),
                                 self.hidden_size

@@ -18,34 +18,42 @@ args.add_argument("--input_size", default=1, type = int, help='LSTM Model Input 
 args.add_argument("--hidden_size", default=2, type= int, help='LSTM')
 args.add_argument("--dropout", default=0.3, type=float, help='LSTM')
 args.add_argument("--seq_length", default=1, type=int, help='LSTM')
+args.add_argument("--batch_size", default=1, type=int)
 args = args.parse_args() #내용 저장
 
-raw_data = ["Hello World"]
-#label = 1
+#%%
+raw_data = ["Hello World", "Hello word"]
+label = [0,1]
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+tokenized_inp = tokenizer.encode_plus(raw_data, max_length=32, pad_to_max_length=True,
+                                      return_tensors="pt")
+tokenized_output = tokenizer.encode_plus(label, max_length=32, pad_to_max_length=True,
+                                         return_tensors="pt")
 
-print(raw_data[0])
+#%%
+print(tokenized_inp['input_ids'].shape)
+print(tokenized_output)
+#%%
 
-label = 1
-#%%
-print(tokenizer.tokenize(raw_data[0]))
-#%%
-model = LSTM.LSTM(args)
+model = LSTM.LSTM_RNN기반(args)
 loss_function = torch.nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr= args.learning_rate)
 
 for epoch in range(args.num_epochs) :
-    for data in raw_data :
-        data = tokenizer.tokenize(data)
+    #hidden = torch.zeros(1, args.batch_size, args.hidden_size, requires_grad=True)
+    #cell = torch.zeros(1, args.batch_size, args.hidden_size, requires_grad=True)
+    output = model(tokenized_inp['input_ids'])
+    loss = loss_function(output, tokenized_output['input_ids'])
 
-        output = model(data)
-        optimizer.zero_grad()
+    optimizer.zero_grad()
 
-        loss = loss_function(output,label)
+    loss = loss_function(output,label)
 
-        loss.backward()
-        optimizer.step()
+    loss.backward()
+    optimizer.step()
 
-        if epoch %100 == 0 :
-            print("epoch: $d, loss : %1.5f" % (epoch, loss.item()))
+    if epoch %100 == 0 :
+        print("epoch: $d, loss : %1.5f" % (epoch, loss.item()))
+
+
