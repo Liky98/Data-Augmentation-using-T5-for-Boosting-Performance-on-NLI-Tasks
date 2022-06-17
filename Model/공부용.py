@@ -35,7 +35,7 @@ class LSTM_Jun(nn.Module):
         self.hidden_size = args.hidden_size
         self.seq_length = args.seq_length
 
-        self.lstm = nn.LSTM(input_size=args.input_size, hidden_size=args.hidden_size,
+        self.lstm = nn.LSTM(input_size=args.input_size, hidden_size=args.hidden_size, #단어의 개수 / 은닉층 사이즈 / 레이어 개수
                             num_layers=args.num_layers, batch_first=True)
 
         self.layer_1 = nn.Linear(args.hidden_size, 256)
@@ -47,6 +47,13 @@ class LSTM_Jun(nn.Module):
     def forward(self, x):
         h_0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size)  # Hidden State
         c_0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size)  # Internal Process States
+
+        nn.Sequential(
+
+            nn.ReLU(),
+            nn.Linear(),
+            nn.
+        )
         output, (hn, cn) = self.lstm(x, (h_0, c_0))
         hn = hn.view(-1, self.hidden_size)  # Reshaping the data for starting LSTM network
         out = self.relu(hn)  # pre-processing for first layer
@@ -99,3 +106,7 @@ for epoch in range(args.num_epochs):
 
         if epoch % 200 == 0:
             print("Epoch : %d, loss : %1.5f" % (epoch, loss.item()))
+
+#%%
+input_data = torch.randn(5,3,10)
+print(input_data)
