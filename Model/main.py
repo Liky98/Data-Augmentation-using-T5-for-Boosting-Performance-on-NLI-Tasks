@@ -14,11 +14,12 @@ args.add_argument("--learning_rate", default=1e-5, type = int, help='size')
 args.add_argument("--num_layers", default=1, type=int)
 args.add_argument("--num_classes", default=1, type=int)
 
-args.add_argument("--input_size", default=1, type = int, help='LSTM Model Input size')
+args.add_argument("--input_size", default=32, type = int, help='LSTM Model Input size')
 args.add_argument("--hidden_size", default=2, type= int, help='LSTM')
 args.add_argument("--dropout", default=0.3, type=float, help='LSTM')
-args.add_argument("--seq_length", default=1, type=int, help='LSTM')
-args.add_argument("--batch_size", default=1, type=int)
+args.add_argument("--seq_length", default=32, type=int, help='LSTM')
+args.add_argument("--batch_size", default=3, type=int)
+args.add_argument("--dimension", default=1, type=int)
 args = args.parse_args() #내용 저장
 
 #%%
@@ -36,7 +37,7 @@ print(tokenized_inp['input_ids'].shape)
 print(tokenized_output)
 #%%
 
-model = LSTM.LSTM_RNN기반(args)
+model = LSTM.simpleLSTM(args)
 loss_function = torch.nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr= args.learning_rate)
 
@@ -56,4 +57,31 @@ for epoch in range(args.num_epochs) :
     if epoch %100 == 0 :
         print("epoch: $d, loss : %1.5f" % (epoch, loss.item()))
 
+
+#%%
+# Numpy array상태로는 학습이 불가능하므로, Torch Variable 형태로 변경(data/grad/grad_fn)
+
+train_x_tensor = torch.Tensor(train_x)
+
+train_y_tensor = Variable(torch.Tensor(train_y))
+
+# print("After torch variable shape_Train : ",train_x_tensor.shape, train_y.shape)
+
+
+test_x_tensor = Variable(torch.Tensor(test_x))
+
+test_y_tensor = Variable(torch.Tensor(test_y))
+
+# print("After torch Variable shape_Test : ",test_x_tensor.shape, test_y_tensor.shape)
+
+
+train_x_tensor_final = torch.reshape(train_x_tensor, (train_x_tensor.shape[0], 1, train_x_tensor.shape[1]))
+
+train_y_tensor_final = torch.reshape(train_y_tensor, (train_y_tensor.shape[0], 1, train_y_tensor.shape[1]))
+
+test_x_tensor_final = torch.reshape(test_x_tensor, (test_x_tensor.shape[0], 1, test_x_tensor.shape[1]))
+
+test_y_tensor_final = torch.reshape(test_y_tensor, (test_y_tensor.shape[0], 1, test_y_tensor.shape[1]))
+
+# print(train_x_tensor_final.shape, test_x_tensor_final.shape)
 
