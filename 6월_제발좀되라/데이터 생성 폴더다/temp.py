@@ -1,31 +1,10 @@
-import text_performance_indicators
-import torch
-import matplotlib.pyplot as plt
-from sentence_transformers import SentenceTransformer, util
-from tqdm import tqdm
+import random
+from datasets import load_dataset
 
-test_data = [["hello world", " Hi World"],["hello world", "hello word"]]
+raw_datasets = load_dataset("snli")
 
-device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
-entailment_cos_score_list = []
-count = 0
-for data in tqdm(test_data, desc= " 연관 데이터셋 점수 체크중 : "):
-    data1 = text_performance_indicators.sentence_transformer(sentences= data)
-    print(data1)
-    print()
-    print(data1[0])
-    print()
-    print(data1[1])
-    cosine_scores = util.pytorch_cos_sim(data1, data1)
-    print()
-    print(cosine_scores)
-    print()
-    entailment_cos_score_list.append(cosine_scores[0][1].item())
-    print(entailment_cos_score_list)
+raw_datasets['train'] = raw_datasets['train'].filter(lambda x: x['label'] in [1, 2, 0])
+raw_datasets['validation'] = raw_datasets['validation'].filter(lambda x: x['label'] in [1, 2, 0])
+raw_datasets['test'] = raw_datasets['test'].filter(lambda x: x['label'] in [1, 2, 0])
 
-
-plt.title("entailment Dataset cosine similarity")
-plt.xlabel("Data Index")
-plt.ylabel("Score")
-plt.plot(entailment_cos_score_list, 'bo', markersize=5)
-plt.show()
+print(raw_datasets['train'][:3])

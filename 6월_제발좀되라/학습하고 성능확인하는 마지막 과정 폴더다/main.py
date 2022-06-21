@@ -7,13 +7,13 @@ import test
 device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
 seed.set_seed(42)
 model_name= 'roberta-large'
-model_save_path = "save_model/0607(NEW)/"
+model_save_path = "save_model/0621ALL/"
 
 #저장될 최종 데이터셋 경로 설정
-dataset_path = "dataset/0607(NEW)"
+dataset_path = "dataset/0621ALL"
 
 #증대 데이터만 합쳐논 DataDict path
-da_train_csv_path = "../데이터 생성 폴더다/Processing_테스트.csv"
+da_train_csv_path = "../데이터 생성 폴더다/(0620)ALL.csv"
 
 # da_all_csv_path = "../소량데이터로 테스트함/100Few_Nucleus실험/processing.csv"
 # print(da_all_csv_path)
