@@ -17,13 +17,13 @@ da_train_csv_path = "../데이터 생성 폴더다/(0620)ALL.csv"
 
 # da_all_csv_path = "../소량데이터로 테스트함/100Few_Nucleus실험/processing.csv"
 # print(da_all_csv_path)
-# dataset = data_loader.data_load_noRawDatset(final_dataset_path = dataset_path,
-#                                      da_train_csv_path=da_all_csv_path
-#                                      )
+dataset = data_loader.data_load_noRawDatset(final_dataset_path = dataset_path,
+                                     da_train_csv_path=da_train_csv_path
+                                     )
 
 print(da_train_csv_path)
-dataset = data_loader.snli_data_load(final_dataset_path=dataset_path,
-                                     da_train_csv_path=da_train_csv_path)
+# dataset = data_loader.snli_data_load(final_dataset_path=dataset_path,
+#                                      da_train_csv_path=da_train_csv_path)
 
 train_dataloader, validation_dataloader, test_dataloader = data_loader.dataloader(model_name= model_name,
                                                                                   dataset=dataset
@@ -51,3 +51,5 @@ test.confusion(prediction_list=prediction_list,
                )
 
 test.plot_accracy(accuracy_mean_list)
+#%%
+label_list
