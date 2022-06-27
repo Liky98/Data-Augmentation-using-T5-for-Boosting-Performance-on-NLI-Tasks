@@ -52,7 +52,7 @@ class LSTM_Jun(nn.Module):
 
             nn.ReLU(),
             nn.Linear(),
-            nn.
+
         )
         output, (hn, cn) = self.lstm(x, (h_0, c_0))
         hn = hn.view(-1, self.hidden_size)  # Reshaping the data for starting LSTM network
