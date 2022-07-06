@@ -108,3 +108,4 @@ for epoch in range(args.num_epochs):
             print("Epoch : %d, loss : %1.5f" % (epoch, loss.item()))
 
 #%%
+input_data = torch.randn(5,3,10)
