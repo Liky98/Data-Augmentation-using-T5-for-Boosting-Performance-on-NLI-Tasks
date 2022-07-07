@@ -19,3 +19,4 @@ events*
 training_roberta*
 *.pth
 *.arrow
+*.tsv
