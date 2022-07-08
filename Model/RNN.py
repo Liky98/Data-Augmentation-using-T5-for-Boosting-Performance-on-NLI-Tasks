@@ -14,31 +14,29 @@ args.add_argument("--num_layers", default=3, type=float)
 args.add_argument("--hidden_size", default=10, type=float)
 args.add_argument("--sequence_length", default=3, type=float)
 
+args.add_argument("--Wx", default=3, type=float)
+args.add_argument("--Wh", default=3, type=float)
+args.add_argument("--b", default=3, type=float)
+
 args = args.parse_args() #내용 저장
 
 class RNN_model(nn.Module):
     def __init__(self, args):
         super(RNN_model, self).__init__()
 
-        self.embedding_layer = nn.Embedding(num_embeddings= args.vocab_length,
-                                      embedding_dim=args.embedding_dim)
-        self.h_now = None
-        self.h_next = None
-        self.w_now = None
-        self.w_next = None
+        self.parameter = [args.Wx, args.Wh, args.b]
+        self.grads = [np.zeros_like(args.Wx), np.zeros_like(args.Wh), np.zeros_like(args.b)]
+        self.cache = None
 
-        self.mat_mul1 = np.matmul(self.h_now,self.w_now)
-        self.mat_mul2 = np.matmul(self.h_next,self.w_next)
+    def forward(self,x,h_prev):
+        Wx, Wh, b = self.parameter
 
-        self.bias = None
+        h = np.matmul(x, Wx) + np.matmul(h_prev, Wh) + b
+        h = np.tanh(h)
 
-        self.tanh = nn.Tanh()
+        self.cache = (x, h_prev, h)
+        return h
 
-    def forward(self):
-
-
-
-        print()
 class VanillaRNN(nn.Module):
   def __init__(self, args):
     super(VanillaRNN, self).__init__()
