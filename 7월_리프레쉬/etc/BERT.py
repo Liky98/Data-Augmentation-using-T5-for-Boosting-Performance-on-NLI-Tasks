@@ -168,6 +168,7 @@ class Transformer(nn.Module):
         super().__init__()
         self.embed = Embeddings(cfg)
         self.blocks = nn.ModuleList([Block(cfg) for _ in range(cfg.n_layers)])
+        #self.linear = nn.Linear(cfg.model_dim)
 
     def forward(self, x, seg, mask):
         h = self.embed(x, seg)
@@ -178,14 +179,10 @@ class Transformer(nn.Module):
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
 #%%
-
-
 sentence = "what are <MASK> doing?"
 input = tokenizer.encode_plus(sentence, return_tensors='pt')
 print(input)
 
-
-print(input)
 a, b, c =input
 print(a)
 config = Config()
@@ -199,3 +196,4 @@ print(predict)
 #%%
 translation = tokenizer.decode(predict[0], skip_special_tokens=True)
 print(translation)
+

@@ -27,15 +27,29 @@ class Custom_Model(nn.Module) :
             dropout=args.dropout #Default = 0.1
         )
 
-        #self.classification = nn.Linear()
+        self.classification = nn.Linear(in_features= 512,
+                                        out_features=10)
+
+        self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x, y):
-        return self.transformer(x,y)
+        output = self.transformer(x,y)
+        #print(output)
+        print(output.shape)
+        output = self.classification(output)
+        #print(output)
+        print(output.shape)
+        output = self.softmax(output)
 
+        print(output.shape)
+        return output
 model = Custom_Model(args)
-src = torch.rand((10,32,512))
-target = torch.rand((20,32,512))
+
+src = torch.rand(1,32,512)
+
+target = torch.rand(2,32,512)
 
 output = model(src,target)
-print(output.shape)
+#print(output.shape)
 print(output)
+
