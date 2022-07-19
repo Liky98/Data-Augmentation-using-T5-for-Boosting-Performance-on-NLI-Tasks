@@ -5,7 +5,7 @@ from datasets import load_dataset
 
 
 class GLUE_dataset():
-    def Dataset_List():
+    def Dataset_List(self) :
         print("GLUE dataset List :")
         print('cola', 'sst2', 'mrpc', 'qqp',
               'stsb', 'mnli', 'mnli_mismatched',
@@ -51,7 +51,7 @@ class GLUE_dataset():
 
 if __name__ == "__main__" :
     loadD = GLUE_dataset
-    print(loadD.Dataset_List())
+    print(loadD.Dataset_List)
 
     data = loadD.load_GLUE_from_Huggingface("ax")
     print(data['test'][0])
