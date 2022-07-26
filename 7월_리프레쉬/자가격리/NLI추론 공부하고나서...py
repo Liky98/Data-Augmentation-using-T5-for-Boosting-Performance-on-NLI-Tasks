@@ -60,14 +60,14 @@ def train(model,train_dataloader,val_dataloader):
     model.to(device)
     optimizer = Adam(model.parameters(), lr=1e-5)
     lossfunction = nn.CrossEntropyLoss()
-
+    top_val_loss = 100
+    top_val_accuracy = 0
     for epoch in range(5):
         model.train()
         total_acc_train = 0
         total_loss_train = 0
         now_data_len = 0
-        top_train_accuracy = 0
-        top_val_accuracy = 0
+
         train_dataloader = tqdm(train_dataloader, desc='Loading train dataset')
         for i, batch in enumerate(train_dataloader):
             optimizer.zero_grad()
@@ -112,10 +112,10 @@ def train(model,train_dataloader,val_dataloader):
                   f'| Val Loss: {total_loss_val /len_val_data: .3f} \n'
                   f'| Val Accuracy: {total_acc_val / len_val_data: .3f}')
 
-        if total_acc_train < top_train_accuracy and total_acc_val < top_val_accuracy :
+        if total_loss_val > top_val_loss and total_acc_val < top_val_accuracy :
             break
-        if total_acc_train>top_train_accuracy:
-            top_train_accuracy=top_train_accuracy
+        if total_loss_val < top_val_loss:
+            top_val_loss = total_loss_val
         if total_acc_val > top_val_accuracy:
             top_val_accuracy = total_acc_val
 
