@@ -1,5 +1,6 @@
 import csv_to_datasetdict
 from transformers import AlbertForSequenceClassification, AlbertConfig, AlbertTokenizer
+from transformers import RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
@@ -10,7 +11,7 @@ from torch import nn
 from torch.optim import Adam
 from tqdm import tqdm
 import torch
-import torch.nn.functional as F
+import matplotlib.pyplot as plt
 
 class ALBERT_base_classification(nn.Module):
     def __init__(self):
@@ -41,6 +42,33 @@ class ALBERT_base_classification(nn.Module):
     def load(self):
         self.model = torch.load('./model.pth')
 
+class RoBERTa_base_classification(nn.Module):
+    def __init__(self):
+        super(RoBERTa_base_classification, self).__init__()
+        self.RoBERTa_base_config = RobertaConfig(hidden_size=768,
+                                              num_attention_heads=12,
+                                              intermediate_size=3072,
+                                              id2label={"0": "Entailment",
+                                                        "1": "Neutral",
+                                                        "2": "Contradiction"}
+                                              )
+        """#Just Structure"""
+        self.model = RobertaForSequenceClassification(config = self.RoBERTa_base_config)
+
+    def forward(self, input_ids, token_type_ids, attention_mask, labels):
+        output = self.model(input_ids = input_ids, token_type_ids=token_type_ids, attention_mask=attention_mask, labels=labels)
+        return output
+
+    def get_tokenizer(self):
+        tokenizer= RobertaTokenizer.from_pretrained('roberta-base')
+        return tokenizer
+
+    def save(self):
+        torch.save(self.model, './Just_structure_roberta.pth')
+
+    def load(self):
+        self.model = torch.load('./model.pth')
+
 def test():
     model = ALBERT_base_classification()
     tokenizer = model.get_tokenizer()
@@ -62,9 +90,15 @@ def train(model,train_dataloader,val_dataloader):
     model.to(device)
     optimizer = Adam(model.parameters(), lr=1e-5)
     lossfunction = nn.CrossEntropyLoss()
+
     top_val_loss = 100
     top_val_accuracy = 0
-    for epoch in range(5):
+    train_loss_list =[]
+    val_loss_list = []
+    train_acc_list = []
+    val_acc_list = []
+
+    for epoch in range(20):
         model.train()
         total_acc_train = 0
         total_loss_train = 0
@@ -113,6 +147,10 @@ def train(model,train_dataloader,val_dataloader):
                   f'| Train Accuracy: {total_acc_train / len_train_data: .3f} \n'
                   f'| Val Loss: {total_loss_val /len_val_data: .3f} \n'
                   f'| Val Accuracy: {total_acc_val / len_val_data: .3f}')
+            train_acc_list.append(total_acc_train / len_train_data)
+            train_loss_list.append(total_loss_train / len_train_data)
+            val_acc_list.append(total_acc_val / len_val_data)
+            val_loss_list.append(total_loss_val /len_val_data)
 
         if total_loss_val > top_val_loss and total_acc_val < top_val_accuracy :
             break
@@ -123,7 +161,10 @@ def train(model,train_dataloader,val_dataloader):
 
         model.save()
 
-    return model
+
+
+
+    return model, train_acc_list, train_loss_list, val_acc_list, val_loss_list
 
 def final_test(model, test_dataloader):
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -168,17 +209,37 @@ def confusion(prediction_list, label_list) :
     f1_score_detail= classification_report(my_data, y_pred_list,  digits=3)
     print(f1_score_detail)
 
+def result_graph(train_acc_list, train_loss_list, val_acc_list, val_loss_list):
+    epochs = len(train_acc_list)
+    plt.plot(epochs, train_loss_list, 'r', label='Training loss')
+    plt.plot(epochs, val_loss_list, 'b', label='Validation loss')
+    plt.title('Training and validation loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.show()
+
+
+    plt.plot(epochs, train_acc_list, 'r', label='Training Accuracy')
+    plt.plot(epochs, val_acc_list, 'b', label='Validation Accuracy')
+    plt.title('Training and validation accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.show()
 
 if __name__ == "__main__" :
-    model = ALBERT_base_classification()
+    #model = ALBERT_base_classification()
+    model = RoBERTa_base_classification()
     tokenizer = model.get_tokenizer()
 
     train_dataloader, dev_dataloader, test_dataloader = SNLI_load_and_processing.snli_dataset(tokenizer)
     #train_dataloader, dev_dataloader, test_dataloader = csv_to_datasetdict.cToD()
 
-    model = train(model=model, train_dataloader=train_dataloader, val_dataloader=dev_dataloader)
+    model, train_acc_list, train_loss_list, val_acc_list, val_loss_list = train(model=model, train_dataloader=train_dataloader, val_dataloader=dev_dataloader)
 
     predict_list, label_list = final_test(model, test_dataloader)
     confusion(predict_list,label_list)
     #print(AlbertConfig())
+    result_graph(train_acc_list, train_loss_list, val_acc_list, val_loss_list)
 
