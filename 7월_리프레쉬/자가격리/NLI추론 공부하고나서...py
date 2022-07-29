@@ -22,8 +22,10 @@ class ALBERT_base_classification(nn.Module):
                                                         "1": "Neutral",
                                                         "2": "Contradiction"}
                                               )
-
-        self.model = AlbertForSequenceClassification.from_pretrained("albert-base-v2", config = self.AlBERT_base_config)
+        """pretrained"""
+        #self.model = AlbertForSequenceClassification.from_pretrained("albert-base-v2", config = self.AlBERT_base_config)
+        """#Just Structure"""
+        self.model = AlbertForSequenceClassification(config = self.AlBERT_base_config)
 
     def forward(self, input_ids, token_type_ids, attention_mask, labels):
         output = self.model(input_ids = input_ids, token_type_ids=token_type_ids, attention_mask=attention_mask, labels=labels)
@@ -34,7 +36,7 @@ class ALBERT_base_classification(nn.Module):
         return tokenizer
 
     def save(self):
-        torch.save(self.model, './model.pth')
+        torch.save(self.model, './Just_structure_model.pth')
 
     def load(self):
         self.model = torch.load('./model.pth')
