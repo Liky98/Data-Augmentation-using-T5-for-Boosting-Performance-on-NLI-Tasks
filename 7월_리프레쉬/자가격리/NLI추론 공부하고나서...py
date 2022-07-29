@@ -21,12 +21,14 @@ class ALBERT_base_classification(nn.Module):
                                               intermediate_size=3072,
                                               id2label={"0": "Entailment",
                                                         "1": "Neutral",
-                                                        "2": "Contradiction"}
+                                                        "2": "Contradiction"},
+                                               num_labels=3
                                               )
         """pretrained"""
         #self.model = AlbertForSequenceClassification.from_pretrained("albert-base-v2", config = self.AlBERT_base_config)
         """#Just Structure"""
         self.model = AlbertForSequenceClassification(config = self.AlBERT_base_config)
+
 
     def forward(self, input_ids, token_type_ids, attention_mask, labels):
         output = self.model(input_ids = input_ids, token_type_ids=token_type_ids, attention_mask=attention_mask, labels=labels)
@@ -45,18 +47,15 @@ class ALBERT_base_classification(nn.Module):
 class RoBERTa_base_classification(nn.Module):
     def __init__(self):
         super(RoBERTa_base_classification, self).__init__()
-        self.RoBERTa_base_config = RobertaConfig(hidden_size=768,
-                                              num_attention_heads=12,
-                                              intermediate_size=3072,
-                                              id2label={"0": "Entailment",
-                                                        "1": "Neutral",
-                                                        "2": "Contradiction"}
-                                              )
+        self.RoBERTa_base_config = RobertaConfig(max_position_embeddings=514,
+                                                 eos_token_id=1,
+                                                 num_labels=3)
+        print(self.RoBERTa_base_config)
         """#Just Structure"""
         self.model = RobertaForSequenceClassification(config = self.RoBERTa_base_config)
-
-    def forward(self, input_ids, token_type_ids, attention_mask, labels):
-        output = self.model(input_ids = input_ids, token_type_ids=token_type_ids, attention_mask=attention_mask, labels=labels)
+        print(self.model.parameters)
+    def forward(self, input_ids, attention_mask, labels):
+        output = self.model(input_ids = input_ids , attention_mask=attention_mask, labels=labels)
         return output
 
     def get_tokenizer(self):
@@ -108,37 +107,45 @@ def train(model,train_dataloader,val_dataloader):
         for i, batch in enumerate(train_dataloader):
             optimizer.zero_grad()
             batch = {k: v.to(device) for k, v in batch.items()}
+            #batch = {k: v for k, v in batch.items()}
 
-            output = model(batch['input_ids'],batch['token_type_ids'],batch['attention_mask'], batch['labels'])
+            output = model(input_ids = batch["input_ids"],
+                           token_type_ids= batch['token_type_ids'],
+                           attention_mask=batch['attention_mask'],
+                           labels=batch['labels'])
 
-            batch_loss = lossfunction(output.logits, batch['labels'])
+            #batch_loss = lossfunction(output.logits, batch['labels'])
             output.loss.backward()
             optimizer.step()
 
             predict = torch.argmax(output.logits, dim=-1)
 
-            total_loss_train = total_loss_train + batch_loss.item()
+            total_loss_train = total_loss_train + output.loss.item()
             acc = (predict == batch['labels']).sum().item()
             total_acc_train += acc
             now_data_len += len(batch['labels'])
 
-            train_dataloader.set_description("Loss %.04f Acc %.04f | step %d Epoch %d" % (batch_loss, total_acc_train / now_data_len, i,epoch))
+            train_dataloader.set_description("Loss %.04f Acc %.04f | step %d Epoch %d" % (output.loss, total_acc_train / now_data_len, i,epoch))
 
         total_acc_val = 0
         total_loss_val = 0
         with torch.no_grad():
             model.eval()
             for batch in tqdm(val_dataloader):
+                batch = {k: v.to(device) for k, v in batch.items()}
 
-                output = model(**batch.to(device))
+                output = model(input_ids = batch["input_ids"],
+                           token_type_ids= batch['token_type_ids'],
+                           attention_mask=batch['attention_mask'],
+                           labels=batch['labels'])
 
                 predict = torch.argmax(output.logits, dim=-1)
 
                 acc = (predict == batch['labels']).sum().item()
 
-                batch_loss = lossfunction(output.logits, batch['labels'])
+                #batch_loss = lossfunction(output.logits, batch['labels'])
 
-                total_loss_val += batch_loss.item()
+                total_loss_val += output.loss.item()
 
                 total_acc_val += acc
             print()
@@ -229,8 +236,8 @@ def result_graph(train_acc_list, train_loss_list, val_acc_list, val_loss_list):
     plt.show()
 
 if __name__ == "__main__" :
-    #model = ALBERT_base_classification()
-    model = RoBERTa_base_classification()
+    model = ALBERT_base_classification()
+    #model = RoBERTa_base_classification()
     tokenizer = model.get_tokenizer()
 
     train_dataloader, dev_dataloader, test_dataloader = SNLI_load_and_processing.snli_dataset(tokenizer)
