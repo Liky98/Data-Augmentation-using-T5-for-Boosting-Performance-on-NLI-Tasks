@@ -217,7 +217,7 @@ def confusion(prediction_list, label_list) :
     print(f1_score_detail)
 
 def result_graph(train_acc_list, train_loss_list, val_acc_list, val_loss_list):
-    epochs = len(train_acc_list)
+    epochs = [0,1,2,3,4,5,6]
     plt.plot(epochs, train_loss_list, 'r', label='Training loss')
     plt.plot(epochs, val_loss_list, 'b', label='Validation loss')
     plt.title('Training and validation loss')
@@ -249,4 +249,5 @@ if __name__ == "__main__" :
     confusion(predict_list,label_list)
     #print(AlbertConfig())
     result_graph(train_acc_list, train_loss_list, val_acc_list, val_loss_list)
+
 
