@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader
 from transformers import DataCollatorWithPadding
 from tqdm import tqdm
 import random
+import matplotlib.pyplot as plt
 import torch
 
 def processing():
@@ -49,61 +50,75 @@ def few_shot_dataset(dataset, label):
 
     return few_shot_train_sample, few_shot_val_sample
 
-def plus_explain():
-    print()
+def result_graph(train_loss_list, val_loss_list):
+    epochs = [x for x in range(len(train_loss_list))]
+    plt.plot(epochs, train_loss_list, 'r', label='Training loss')
+    epochs = [x for x in range(len(val_loss_list))]
+    plt.plot(epochs, val_loss_list, 'b', label='Validation loss')
+    plt.title('Training and validation loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.show()
 
 if __name__ =="__main__":
-    entailment, neutral, contradiction = processing()
-    Entailment_train_sample, Entailment_val_sample =few_shot_dataset(entailment, "Entailment:")
-    Neutral_train_sample, Neutral_val_sample = few_shot_dataset(neutral, "Neutral:")
-    Contradiction_train_sample, Contradiction_val_sample = few_shot_dataset(contradiction, "Contradiction:")
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-    print(Entailment_train_sample)
-    print()
-    print(Entailment_val_sample)
+    try :
+        print(f"데이터셋확인 \n{Entailment_train_sample}")
+    except :
+        entailment, neutral, contradiction = processing()
+        Entailment_train_sample, Entailment_val_sample =few_shot_dataset(entailment, "Entailment: ")
+        Neutral_train_sample, Neutral_val_sample = few_shot_dataset(neutral, "Neutral: ")
+        Contradiction_train_sample, Contradiction_val_sample = few_shot_dataset(contradiction, "Contradiction: ")
 
-
-    model = T5ForConditionalGeneration.from_pretrained("t5-base")
+    model = T5ForConditionalGeneration.from_pretrained("t5-base").to(device)
     tokenizer = T5Tokenizer.from_pretrained('t5-base')
     optimizer = Adam(model.parameters(), lr = 1e-5)
 
     train_loss = []
-    train_acc = []
-    val_acc = []
     val_loss = []
 
+    for i in range(5):
+        model.train()
+        for input_sentence, output_sentence in tqdm(Neutral_train_sample) :
+            inputs = tokenizer(input_sentence, return_tensors="pt").to(device)
+            outputs = tokenizer(output_sentence, return_tensors='pt').to(device)
 
-    model.train()
-    for input_sentence, output_sentence in tqdm(Entailment_train_sample) :
-        inputs = tokenizer(input_sentence, return_tensors="pt")
-        output = tokenizer(output_sentence, return_tensors='pt')
+            optimizer.zero_grad()
+            output = model(input_ids=inputs.input_ids,
+                           attention_mask=inputs.attention_mask,
+                           labels=outputs.input_ids,
+                           decoder_attention_mask= outputs.attention_mask)
 
-        optimizer.zero_grad()
-        output = model(input_ids=inputs.input_ids,
-                       attention_mask=inputs.attention_mask,
-                       labels=output.input_ids,
-                       decoder_attention_mask= output.attention_mask)
+            output.loss.backward()
+            optimizer.step()
 
-        output.loss.backward()
-        optimizer.step()
+            predict = torch.argmax(output.logits, dim=-1)
+            train_loss.append(output.loss.item())
 
-        predict = torch.argmax(output.logits, dim=-1)
-        train_loss.append(output.loss)
-        train_acc.append(predict)
+        with torch.no_grad():
+            model.eval()
+            for input_sentence, output_sentence in tqdm(Neutral_val_sample) :
+                inputs = tokenizer(input_sentence, return_tensors="pt").to(device)
+                outputs = tokenizer(output_sentence, return_tensors='pt').to(device)
 
-    with torch.no_grad():
-        model.eval()
-        for input_sentence, output_sentence in tqdm(Entailment_val_sample) :
-            inputs = tokenizer(input_sentence, return_tensors="pt")
-            output = tokenizer(output_sentence, return_tensors='pt')
+                # output = model.generate(**inputs)
 
-            output = model.generate(**inputs)
-
-            print(input_sentence)
-            print(output_sentence)
-            print(tokenizer.decode(output.squeeze(0)))
-            print(f'원래정답 > "entailment')
-
+                output = model(input_ids=inputs.input_ids,
+                               attention_mask=inputs.attention_mask,
+                               labels=outputs.input_ids,
+                               decoder_attention_mask=outputs.attention_mask)
 
 
+                predict = torch.argmax(output.logits, dim=-1)
+                val_loss.append(output.loss.item())
+                print()
+                print(input_sentence)
+                print(output_sentence)
+                print(tokenizer.decode(predict[0], skip_special_tokens=True))
+    result_graph(train_loss, val_loss)
 
+
+#%%
+torch.save(model, "T5_Contradiction.pth")
