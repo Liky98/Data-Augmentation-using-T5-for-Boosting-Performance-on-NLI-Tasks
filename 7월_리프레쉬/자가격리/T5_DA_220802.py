@@ -99,9 +99,6 @@ if __name__ =="__main__":
 
             output = model.generate(**inputs)
 
-            val_loss.append(output.loss)
-            val_acc.append(predict)
-
             print(input_sentence)
             print(output_sentence)
             print(tokenizer.decode(output.squeeze(0)))
