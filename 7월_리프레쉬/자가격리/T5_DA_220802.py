@@ -74,14 +74,14 @@ if __name__ =="__main__":
 
     model = T5ForConditionalGeneration.from_pretrained("t5-base").to(device)
     tokenizer = T5Tokenizer.from_pretrained('t5-base')
-    optimizer = Adam(model.parameters(), lr = 1e-5)
+    optimizer = Adam(model.parameters(), lr = 3e-4)
 
     train_loss = []
     val_loss = []
 
-    for i in range(5):
+    for i in range(1):
         model.train()
-        for input_sentence, output_sentence in tqdm(Neutral_train_sample) :
+        for input_sentence, output_sentence in tqdm(Contradiction_train_sample) :
             inputs = tokenizer(input_sentence, return_tensors="pt").to(device)
             outputs = tokenizer(output_sentence, return_tensors='pt').to(device)
 
@@ -99,7 +99,7 @@ if __name__ =="__main__":
 
         with torch.no_grad():
             model.eval()
-            for input_sentence, output_sentence in tqdm(Neutral_val_sample) :
+            for input_sentence, output_sentence in tqdm(Contradiction_val_sample) :
                 inputs = tokenizer(input_sentence, return_tensors="pt").to(device)
                 outputs = tokenizer(output_sentence, return_tensors='pt').to(device)
 
