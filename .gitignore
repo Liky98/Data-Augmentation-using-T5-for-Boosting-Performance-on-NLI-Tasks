@@ -20,3 +20,5 @@ training_roberta*
 *.pth
 *.arrow
 *.tsv
+*.npy
+*.np
