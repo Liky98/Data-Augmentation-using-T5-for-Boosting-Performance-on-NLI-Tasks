@@ -22,3 +22,4 @@ training_roberta*
 *.tsv
 *.npy
 *.np
+*.pt
