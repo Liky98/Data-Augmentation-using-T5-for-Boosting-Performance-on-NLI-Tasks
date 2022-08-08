@@ -61,3 +61,11 @@ output_sequences = model.generate(**test_input)
 print(output_sequences)
 
 print(tokenizer.decode(output_sequences.squeeze(0)))
+
+
+#%%
+from transformers import RobertaTokenizer
+tokenizer = RobertaTokenizer.from_pretrained("roberta-base")
+
+print(tokenizer.encode_plus("Hello world!"))
+
