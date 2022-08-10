@@ -13,7 +13,7 @@ class tokenizer_class() :
         # 문장 및 라벨 데이터 추출
         train_data  = [pair[0] for pair in train_pair]
         train_label = [pair[1] for pair in train_pair]
-        print('data loading done!')
+
         print('문장: %s' %(train_data[:3]))
         print('라벨: %s' %(train_label[:3]))
 
@@ -194,8 +194,12 @@ if __name__ =="__main__":
         break
     {k: v.shape for k, v in batch.items()}
 #%%
-tokenizer = RobertaTokenizer("./liky_tokenizer/vocab.json", "./liky_tokenizer/merges.txt")
-
-print(tokenizer.encode(train['reviews'][0]))
-train['reviews'][0]
-#tokenizer
+# tokenizer = RobertaTokenizer("./liky_tokenizer/vocab.json", "./liky_tokenizer/merges.txt")
+#
+# print(tokenizer.encode(train['reviews'][0]))
+# train['reviews'][0]
+# #tokenizer
+token_class = tokenizer_class
+data = token_class.csv_to_text()
+token = token_class.Mecab(data)
+token_class.train_tokenizer(token)

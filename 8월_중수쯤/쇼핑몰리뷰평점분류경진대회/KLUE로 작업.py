@@ -33,7 +33,7 @@ def train(train_dataloader,val_dataloader):
     train_acc_list = []
     val_acc_list = []
 
-    for epoch in range(20):
+    for epoch in range(1):
         model.train()
         total_acc_train = 0
         total_loss_train = 0
@@ -209,23 +209,23 @@ if __name__ == "__main__":
     # submission = pd.read_csv("dataset/sample_submission.csv")
     # submission["target"] = predict_list
     # submission.to_csv("submission.csv",index=False)
-    #%%
-    model = AutoModelForSequenceClassification.from_pretrained("model19.pth")
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-    model.to(device)
-    prediction_list = []
-    label_list = []
-    model.eval()
-    with torch.no_grad():
-        for batch in tqdm(test_dataloader):
-            outputs = model(**batch.to(device))
-
-            logits = outputs.logits
-            predictions = torch.argmax(logits, dim=-1)
-            prediction_list.extend(predictions.cpu().tolist())
-    submission = pd.read_csv("dataset/sample_submission.csv")
-    submission["target"] = prediction_list
-    submission.to_csv("submission3.csv",index=False)
-
-
-
+    # #%%
+    # model = AutoModelForSequenceClassification.from_pretrained("model19.pth")
+    # device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    # model.to(device)
+    # prediction_list = []
+    # label_list = []
+    # model.eval()
+    # with torch.no_grad():
+    #     for batch in tqdm(test_dataloader):
+    #         outputs = model(**batch.to(device))
+    #
+    #         logits = outputs.logits
+    #         predictions = torch.argmax(logits, dim=-1)
+    #         prediction_list.extend(predictions.cpu().tolist())
+    # submission = pd.read_csv("dataset/sample_submission.csv")
+    # submission["target"] = prediction_list
+    # submission.to_csv("submission34.csv",index=False)
+    #
+    #
+    #
