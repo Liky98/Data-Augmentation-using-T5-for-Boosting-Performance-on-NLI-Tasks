@@ -20,37 +20,47 @@ ei_cites = dataset.edge_index('paper', 'paper')
 ei_affiliated = dataset.edge_index('author', 'institution')
 
 split_dict = dataset.get_idx_split()
-valid_idx = split_dict['valid'] # numpy array storing indices of validation paper nodes
+valid_idx = split_dict['valid']
+#%%
+print(f'validation_idx > {valid_idx}')  #[     8016      8596      8665 ... 121749594 121751492 121751535]
+print(f'validation_idx_length > {valid_idx.shape}') #(138949,)
 
+print(f'paper_label > {dataset.paper_label}')
+print(f'paper_year > {dataset.paper_year}')
+print(f'paper_feature > {dataset.paper_feat}')
 
-ei_writes = ei_writes[0:2, :3]
-print(ei_writes)
+edge_id_writes = ei_writes[0:2, :3]
+print(edge_id_writes[0])
+print(edge_id_writes[1])
 
-ei_cites = ei_cites[0:2, :3]
-print(ei_cites)
+edge_id_cites = ei_cites[0:2, :3]
+print(edge_id_cites)
 
-ei_affiliated = ei_affiliated[0:2, :3]
-print(ei_affiliated)
+edge_id_affiliated = ei_affiliated[0:2, :3]
+print(edge_id_affiliated)
 
-
+print(np.concatenate([edge_id_cites[0], edge_id_cites[1]]))
+#%%
 g = dgl.heterograph({
-    ('author', 'write', 'paper'): (ei_writes[0], ei_writes[1]),
-    ('paper', 'write-by', 'author'): (ei_writes[1], ei_writes[0]),
-    ('author', 'affiliate-with', 'institution'): (ei_affiliated[0], ei_affiliated[1]),
-    ('institution', 'affiliate', 'author'): (ei_affiliated[1], ei_affiliated[0]),
-    ('paper', 'cite', 'paper'): (np.concatenate([ei_cites[0], ei_cites[1]]), np.concatenate([ei_cites[1], ei_cites[0]]))
+    ('author', 'write', 'paper'): (edge_id_writes[0], edge_id_writes[1]), # 저자-논문 관계
+    ('paper', 'write-by', 'author'): (edge_id_writes[1], edge_id_writes[0]), # 논문-저자 관계
+
+    ('author', 'affiliate-with', 'institution'): (edge_id_affiliated[0], edge_id_affiliated[1]), # 저자-학회 관계
+    ('institution', 'affiliate', 'author'): (edge_id_affiliated[1], edge_id_affiliated[0]), # 학회-저자 관계
+
+    ('paper', 'cite', 'paper'): (np.concatenate([edge_id_cites[0], edge_id_cites[1]]), np.concatenate([edge_id_cites[1], edge_id_cites[0]])) #논문-논문 관계 (레퍼런스?)
 })
 
 print(g)
-
-
-g = dgl.to_homogeneous(g)
-print(1)
-nx_G = g.to_networkx().to_undirected()
-print(2)
-#pos = nx.kamada_kawai_layout(nx_G)
-pos = nx.spring_layout(nx_G)
-print(3)
-nx.draw(nx_G, pos, with_labels=True, node_color=[[.7, .7, .7]])
-print(4)
-plt.show()
+print(torch.tensor([0, 3]))
+#%%
+# g = dgl.to_homogeneous(g)
+# print(1)
+# nx_G = g.to_networkx().to_undirected()
+# print(2)
+# #pos = nx.kamada_kawai_layout(nx_G)
+# pos = nx.spring_layout(nx_G)
+# print(3)
+# nx.draw(nx_G, pos, with_labels=True, node_color=[[.7, .7, .7]])
+# print(4)
+# plt.show()
