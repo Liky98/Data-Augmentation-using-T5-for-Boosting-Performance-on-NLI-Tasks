@@ -23,3 +23,4 @@ training_roberta*
 *.npy
 *.np
 *.pt
+data_processed
