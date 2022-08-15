@@ -234,19 +234,19 @@ def dataloader(model_name, dataset) :
     return train_dataloader, eval_dataloader, test_dataloader
 
 if __name__ == "__main__" :
-    set_seed(42)
-    dataset = snli_data_load("./dataset")
-    train_dataloader, eval_dataloader, test_dataloader = dataloader("roberta-base", dataset)
-    best_model_path, accuracy_list = model_train("roberta-base",train_dataloader, eval_dataloader, torch.device("cuda:0"), 5, 3)
-    best_model = torch.load(best_model_path)
+    # set_seed(42)
+    # dataset = snli_data_load("./dataset")
+    # train_dataloader, eval_dataloader, test_dataloader = dataloader("roberta-base", dataset)
+    # best_model_path, accuracy_list = model_train("roberta-base",train_dataloader, eval_dataloader, torch.device("cuda:0"), 5, 3)
+    # best_model = torch.load(best_model_path)
 
-    prediction_list, label_list = test.test(test_dataloader=test_dataloader,
-                                            model=best_model,
-                                            device=torch.device("cuda:0")
-                                            )
+    # prediction_list, label_list = test(test_dataloader=test_dataloader,
+    #                                         model=best_model,
+    #                                         device=torch.device("cuda:0")
+    #                                         )
 
-    test.confusion(prediction_list=prediction_list,
+    confusion(prediction_list=prediction_list,
                    label_list=label_list
                    )
 
-    test.plot_accracy(accuracy_list)
+    plot_accracy(accuracy_list)
