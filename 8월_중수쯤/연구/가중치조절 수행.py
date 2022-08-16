@@ -87,6 +87,7 @@ def model_train(model_name, train_dataloader, dev_dataloader, device, num_epochs
         num_warmup_steps=len(train_dataloader) * 2
         #num_training_steps= len(train_dataloader) * num_epochs
     )
+    #lr_scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer, base_lr=0.01, max_lr=0.1)
 
     accuracy_list = []
 
@@ -113,7 +114,7 @@ def model_train(model_name, train_dataloader, dev_dataloader, device, num_epochs
 
             count_temp = 0
             for data in batch["labels"] :
-                if data == 1 :
+                if data == 0 or data == 2 :
                     count_temp +=1
             
             
@@ -234,16 +235,16 @@ def dataloader(model_name, dataset) :
     return train_dataloader, eval_dataloader, test_dataloader
 
 if __name__ == "__main__" :
-    # set_seed(42)
-    # dataset = snli_data_load("./dataset")
-    # train_dataloader, eval_dataloader, test_dataloader = dataloader("roberta-base", dataset)
-    # best_model_path, accuracy_list = model_train("roberta-base",train_dataloader, eval_dataloader, torch.device("cuda:0"), 5, 3)
-    # best_model = torch.load(best_model_path)
+    set_seed(42)
+    dataset = snli_data_load("./dataset")
+    train_dataloader, eval_dataloader, test_dataloader = dataloader("roberta-base", dataset)
+    best_model_path, accuracy_list = model_train("roberta-base",train_dataloader, eval_dataloader, torch.device("cuda:0"), 5, 3)
+    best_model = torch.load(best_model_path)
 
-    # prediction_list, label_list = test(test_dataloader=test_dataloader,
-    #                                         model=best_model,
-    #                                         device=torch.device("cuda:0")
-    #                                         )
+    prediction_list, label_list = test(test_dataloader=test_dataloader,
+                                            model=best_model,
+                                            device=torch.device("cuda:0")
+                                            )
 
     confusion(prediction_list=prediction_list,
                    label_list=label_list
