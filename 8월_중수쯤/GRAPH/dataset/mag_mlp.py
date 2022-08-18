@@ -1,11 +1,51 @@
 import argparse
 
-import torch
+import numpy as np
 import torch.nn.functional as F
+from ogb.nodeproppred import NodePropPredDataset, Evaluator
+import torch
 
-from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
+class Logger(object):
+    def __init__(self, runs, info=None):
+        self.info = info
+        self.results = [[] for _ in range(runs)]
 
-from logger import Logger
+    def add_result(self, run, result):
+        assert len(result) == 3
+        assert run >= 0 and run < len(self.results)
+        self.results[run].append(result)
+
+    def print_statistics(self, run=None):
+        if run is not None:
+            result = 100 * torch.tensor(self.results[run])
+            argmax = result[:, 1].argmax().item()
+            print(f'Run {run + 1:02d}:')
+            print(f'Highest Train: {result[:, 0].max():.2f}')
+            print(f'Highest Valid: {result[:, 1].max():.2f}')
+            print(f'  Final Train: {result[argmax, 0]:.2f}')
+            print(f'   Final Test: {result[argmax, 2]:.2f}')
+        else:
+            result = 100 * torch.tensor(self.results)
+
+            best_results = []
+            for r in result:
+                train1 = r[:, 0].max().item()
+                valid = r[:, 1].max().item()
+                train2 = r[r[:, 1].argmax(), 0].item()
+                test = r[r[:, 1].argmax(), 2].item()
+                best_results.append((train1, valid, train2, test))
+
+            best_result = torch.tensor(best_results)
+
+            print(f'All runs:')
+            r = best_result[:, 0]
+            print(f'Highest Train: {r.mean():.2f} ± {r.std():.2f}')
+            r = best_result[:, 1]
+            print(f'Highest Valid: {r.mean():.2f} ± {r.std():.2f}')
+            r = best_result[:, 2]
+            print(f'  Final Train: {r.mean():.2f} ± {r.std():.2f}')
+            r = best_result[:, 3]
+            print(f'   Final Test: {r.mean():.2f} ± {r.std():.2f}')
 
 
 class MLP(torch.nn.Module):
@@ -86,19 +126,17 @@ def main():
     device = f'cuda:{args.device}' if torch.cuda.is_available() else 'cpu'
     device = torch.device(device)
 
-    dataset = PygNodePropPredDataset(name='ogbn-mag')
+    dataset = NodePropPredDataset(name='ogbn-mag')
     split_idx = dataset.get_idx_split()
-    data = dataset[0]
-    print(data)
 
-    x = data.x_dict['paper']
+    x = dataset[0][0]['node_feat_dict']['paper']
     if args.use_node_embedding:
         embedding = torch.load('embedding.pt', map_location='cpu')
         x = torch.cat([x, embedding], dim=-1)
-    x = x.to(device)
+    x = torch.tensor(x).to(device)
 
-    y_true = data.y_dict['paper'].to(device)
-    train_idx = split_idx['train']['paper'].to(device)
+    y_true = torch.tensor(dataset[0][1]['paper']).to(device)
+    train_idx = torch.tensor(split_idx['train']['paper']).to(device)
 
     model = MLP(x.size(-1), args.hidden_channels, dataset.num_classes,
                 args.num_layers, args.dropout).to(device)
@@ -129,3 +167,14 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+#%%
+dataset = NodePropPredDataset(name='ogbn-mag')
+split_idx = dataset.get_idx_split()
+#print(dataset[0])
+print((dataset[0][1]['paper']))
+#print(dataset[0][0]['node_feat_dict']['paper'])
+"""
+x_dict -> dataset[0][0]['node_feat_dict']['paper'] 를 뜻함
+y_dict -> dataset[0][1]['paper']
+"""
