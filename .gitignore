@@ -24,3 +24,5 @@ training_roberta*
 *.np
 *.pt
 data_processed
+*.pkl
+dgl_data_processed
